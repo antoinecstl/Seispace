@@ -1,4 +1,5 @@
 "use client"
+
 import React, { useState, useEffect } from 'react';
 
 type Player = {
@@ -50,16 +51,20 @@ const WheelOfFortune: React.FC = () => {
     ].join(' ');
   };
 
+
+  //DISOSSIER DE TRUE RESULT QUI SORTIRA COTE SERVER
   // Fonction pour démarrer la rotation de la roue
   const spinWheel = () => {
     setIsSpinning(true);
-    const randomAngle = Math.floor(Math.random() * 360 + 360 * 5); // Rotation de 5 à 6 tours complets
+    const randomAngle = Math.floor(Math.random() * 360 + 360 * 15); // Rotation de 15 tours complets
     setFinalAngle(finalAngle + randomAngle); // Ajouter à l'angle actuel
     setTimeout(() => {
       setIsSpinning(false);
       // Logique pour déterminer le gagnant après la rotation
     }, 6000); // Durée de la rotation
   };
+
+
 
   // Générer les chemins SVG pour chaque joueur
   let startAngle = 0;
@@ -73,13 +78,53 @@ const WheelOfFortune: React.FC = () => {
     );
   });
 
+  // Fonction pour rendre la liste des joueurs avec leurs couleurs
+  const renderPlayerList = () => {
+    return (
+      <div className="mt-4 grid grid-rows-2 grid-cols-2 text-white">
+        {Object.values(players).map((player, index) => (
+          <div key={index} className="flex items-center justify-center mb-2">
+            <div className="w-4 h-4 mr-2" style={{ backgroundColor: player.color }}></div>
+            {player.name}
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  const renderPointer = () => {
+    const pointerSize = 20; // Taille du triangle
+    const pointerWidth = pointerSize * Math.sqrt(3) / 2; // Calcul de la largeur du triangle
+    const pointerHeight = pointerSize;
+
+    return (
+      <svg 
+        width={pointerWidth} 
+        height={pointerHeight} 
+        viewBox={`0 0 ${pointerWidth} ${pointerHeight}`}
+        style={{ 
+          position: 'absolute', 
+          top: '-10px', // Ajuster la position en fonction de vos besoins
+          left: '50%', 
+          transform: 'translateX(-50%)',
+        }}
+      >
+        <polygon 
+          points={`${pointerWidth / 2},0 ${pointerWidth}, ${pointerHeight} 0,${pointerHeight}`} 
+          fill="red" // Vous pouvez changer la couleur ici
+        />
+      </svg>
+    );
+  };
+
   return (
-    <div className='wheel-container'>
+    <div className='wheel-container relative'>
+      {renderPointer()}
       <svg width={wheelSize} height={wheelSize} viewBox={`0 0 ${wheelSize} ${wheelSize}`} style={{ transform: `rotate(${finalAngle}deg)`, transition: 'transform 6s ease-out' }}>
         {paths}
-        {/* Autres éléments SVG ici, comme le texte central */}
       </svg>
-      <button onClick={spinWheel} className="bg-blue-500 text-white p-2 rounded">Spin</button>
+      {renderPlayerList()}
+      <button onClick={spinWheel} className="bg-gray-500 text-white p-2 rounded-lg">Spin</button>
       {/* Ajouter d'autres éléments d'interface ici si nécessaire */}
     </div>
   );
