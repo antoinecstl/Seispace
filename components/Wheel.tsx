@@ -12,19 +12,19 @@ const WheelOfFortune: React.FC = () => {
   // Initialiser les joueurs
   const [players, setPlayers] = useState<{ [id: string]: Player }>({
     'player1': { name: 'Joueur 1', bet: 20, color: '#f82' },
-    'player2': { name: 'Joueur 2', bet: 20, color: '#0bf' },
-    'player3': { name: 'Joueur 3', bet: 10, color: '#fff' },
+    'player2': { name: 'Joueur 2', bet: 1, color: '#0bf' },
+    'player3': { name: 'Joueur 3', bet: 1, color: '#fff' },
   });
 
   // Calculer le pot total
   const totalPot = Object.values(players).reduce((acc, player) => acc + player.bet, 0);
-
+  console.log(totalPot)
   // Autres états
   const [finalAngle, setFinalAngle] = useState(0);
   const [isSpinning, setIsSpinning] = useState(false);
-  const wheelSize = 280;
+  const wheelSize = 350;
   const radius = wheelSize / 2;
-  const innerRadius = radius * 0.8; // Taille du trou intérieur
+  const innerRadius = radius * 0.7; // Taille du trou intérieur
 
   // Convert polar coordinates to Cartesian for SVG path
   const polarToCartesian = (centerX: number, centerY: number, radius: number, angleInDegrees: number) => {
@@ -92,40 +92,96 @@ const WheelOfFortune: React.FC = () => {
     );
   };
 
-  const renderPointer = () => {
-    const pointerSize = 20; // Taille du triangle
-    const pointerWidth = pointerSize * Math.sqrt(3) / 2; // Calcul de la largeur du triangle
-    const pointerHeight = pointerSize;
-
+  const renderTotalPot = () => {
     return (
-      <svg 
-        width={pointerWidth} 
-        height={pointerHeight} 
-        viewBox={`0 0 ${pointerWidth} ${pointerHeight}`}
-        style={{ 
-          position: 'absolute', 
-          top: '-10px', // Ajuster la position en fonction de vos besoins
-          left: '50%', 
-          transform: 'translateX(-50%)',
+      <text
+        x="50%" 
+        y="50%" 
+        textAnchor="middle" 
+        dy=".3em" // Ajuster selon la taille de votre police
+        fill="#fff" // Couleur du texte
+        style={{
+          fontSize: '20px', // Taille de la police
+          userSelect: 'none', // Empêcher la sélection du texte
         }}
       >
-        <polygon 
-          points={`${pointerWidth / 2},0 ${pointerWidth}, ${pointerHeight} 0,${pointerHeight}`} 
-          fill="red" // Vous pouvez changer la couleur ici
-        />
-      </svg>
+        {totalPot}
+      </text>
     );
   };
 
   return (
-    <div className='wheel-container relative'>
-      {renderPointer()}
+    <div className='relative wheel-container'>
       <svg width={wheelSize} height={wheelSize} viewBox={`0 0 ${wheelSize} ${wheelSize}`} style={{ transform: `rotate(${finalAngle}deg)`, transition: 'transform 6s ease-out' }}>
         {paths}
       </svg>
-      {renderPlayerList()}
-      <button onClick={spinWheel} className="bg-gray-500 text-white p-2 rounded-lg">Spin</button>
-      {/* Ajouter d'autres éléments d'interface ici si nécessaire */}
+      <svg 
+        width={20 * Math.sqrt(3) / 2} 
+        height={20} 
+        viewBox={`0 0 ${20 * Math.sqrt(3) / 2} ${20}`}
+        style={{ 
+          position: 'absolute', 
+          top: '-20px', 
+          left: '50%', 
+          transform: 'translateX(-50%) rotate(180deg)',
+        }}
+      >
+        <polygon 
+          points={`${20 * Math.sqrt(3) / 2 / 2},0 ${20 * Math.sqrt(3) / 2}, ${20} 0,${20}`} 
+          fill="red"
+        />
+      </svg>
+      <svg 
+        className="absolute" 
+        width={wheelSize} 
+        height={wheelSize} 
+        style={{ top: 0, left: 0 }}
+      >
+        <text
+          x="50%" 
+          y="35%" 
+          textAnchor="middle" 
+          dy=".3em" 
+          fill="#7878A3" 
+          style={{ fontSize: '13px', userSelect: 'none' }}
+        >
+          Total Value
+          
+        </text>
+        <text
+        x="52%" 
+        y="44%" 
+        textAnchor="middle" 
+        dy=".3em" 
+        fill="#fff" 
+        style={{ fontSize: '28px', userSelect: 'none' }}>
+        {totalPot} $Sei
+        </text>
+        <text
+          x="50%" 
+          y="56%" 
+          textAnchor="middle" 
+          dy=".3em" 
+          fill="#7878A3" 
+          style={{ fontSize: '13px', userSelect: 'none' }}
+        >
+          CountDown
+        </text>
+
+        <text
+          x="50%" 
+          y="65%" 
+          textAnchor="middle" 
+          dy=".3em" 
+          fill="#fff" 
+          style={{ fontSize: '26px', userSelect: 'none' }}
+        >
+          00:00
+          
+        </text>
+        
+      </svg>
+      <button onClick={spinWheel} className="bg-gray-500 text-white p-2 rounded-lg absolute bottom-10 left-1/2 transform -translate-x-1/2">Spin</button>
     </div>
   );
 };

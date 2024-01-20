@@ -9,6 +9,10 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@cosmos-kit/compass": "^2.6.5",
+    "@cosmos-kit/react": "^2.10.5",
+    "@sei-js/react": "^3.2.0",
+    "chain-registry": "^1.25.4",
     "next": "14.1.0",
     "react": "^18",
     "react-dom": "^18",

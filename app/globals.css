@@ -103,7 +103,7 @@ body {
   }
 
   .rightsidebar {
-    @apply sticky right-0 top-[125px] z-20 flex max-h-fit w-fit flex-col justify-between gap-10 overflow-auto bg-slate-900/60 rounded-xl mb-10 mt-10 px-8 mr-4 pb-4 pt-4 max-xl:hidden;
+    @apply sticky right-0 top-[125px] z-20 flex w-52 flex-col justify-between gap-10 overflow-auto bg-slate-900/60 rounded-xl mb-10 mt-10 px-8 mr-4 pb-4 pt-4 max-xl:hidden;
   }
 }
 
