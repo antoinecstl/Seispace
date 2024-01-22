@@ -1,19 +1,12 @@
 "use client"
 import Image from "next/image";
 import Link from "next/link";
-import { SeiWalletProvider, useWallet, WalletConnectButton } from '@sei-js/react';
+import { useMemo } from "react";
+import { WalletConnectButton, useWallet, } from '@sei-js/react';
 
 function Topbar() {
-    const { offlineSigner, connectedWallet, accounts } = useWallet();
+ 
   return (
-    <SeiWalletProvider
-      chainConfiguration={{
-        chainId: 'atlantic-2',
-        restUrl: 'http://localhost:3000/',
-        rpcUrl: 'http://localhost:3000/'
-      }} 
-      wallets={['compass']} 
-      autoConnect='compass'>
     <nav className='topbar mt-2'>
         <Link href='/' className='flex items-center gap-4'>
             <Image src='/target.svg' alt='logo' width={32} height={32} />
@@ -21,20 +14,20 @@ function Topbar() {
         </Link>
 
         <div className='flex items-center gap-1 text-white'>
-            <div className='flex gap-6 ml-2'>
-                <Link href='https://twitter.com/SeiSpaceHub' className="mt-1">
+            <div className='flex gap-6 mr-4'>
+                <Link href='https://twitter.com/SeiSpaceHub' className="mt-1 hover:opacity-50 duration-300">
                     <Image src='/X_logo_2023.svg' alt='logo' width={26} height={26}/>
                 </Link>
-                <Link href='https://twitter.com/SeiSpaceHub' >
+                <Link href='https://twitter.com/SeiSpaceHub' className="hover:opacity-50 duration-300">
                     <Image src='/discord.svg' alt='logo' width={30} height={30}/>
                 </Link>
             </div>
-            <div>
-                {!connectedWallet ? <WalletConnectButton /> : <p>connected to: {connectedWallet}</p>}
-        </div>
+            <div className="bg-primary-600 hover:bg-primary-500 duration-300 px-2 py-1 rounded-xl">
+                <WalletConnectButton/>
+            </div>
         </div>
     </nav>
-    </SeiWalletProvider>
+    
   );
 }
 

@@ -1,8 +1,11 @@
+"use client"
+
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Topbar from "@/components/shared/Topbar";
 import LeftSidebar from "@/components/shared/LeftSidebar";
 import RightSidebar from "@/components/shared/RightSidebar";
+import { SeiWalletProvider } from "@sei-js/react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -12,19 +15,27 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-      
-      <><link rel="icon" href="/favicon.ico" sizes="any" /><html lang='en'>
+    <><link rel="icon" href="/favicon.ico" sizes="any" /><html lang='en'>
       <body className={inter.className}>
-        <Topbar />
+        <SeiWalletProvider
+          chainConfiguration={{
+            chainId: 'atlantic-2',
+            restUrl: 'http://localhost:3000/',
+            rpcUrl: 'http://localhost:3000/'
+          }}
+          wallets={['compass']}
+          autoConnect='compass'>
+          <Topbar />
 
-        <main className='flex flex-row'>
-          <LeftSidebar />
-          <section className='main-container'>
-            <div className='w-full max-w-6xl'>{children}</div>
-          </section>
-          <RightSidebar />
-          {/* @ts-ignore */}
-        </main>
+          <main className='flex flex-row'>
+            <LeftSidebar />
+            <section className='main-container mt-4 mb-8'>
+              <div className='w-full max-w-6xl'>{children}</div>
+            </section>
+            <RightSidebar />
+            {/* @ts-ignore */}
+          </main>
+        </SeiWalletProvider>
       </body>
     </html></>
     
