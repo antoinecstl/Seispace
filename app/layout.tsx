@@ -4,7 +4,6 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Topbar from "@/components/shared/Topbar";
 import LeftSidebar from "@/components/shared/LeftSidebar";
-import RightSidebar from "@/components/shared/RightSidebar";
 import { SeiWalletProvider } from "@sei-js/react";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -32,7 +31,6 @@ export default function RootLayout({
             <section className='main-container mt-4 mb-8'>
               <div className='w-full max-w-6xl'>{children}</div>
             </section>
-            <RightSidebar />
             {/* @ts-ignore */}
           </main>
         </SeiWalletProvider>

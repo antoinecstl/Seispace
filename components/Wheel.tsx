@@ -1,7 +1,7 @@
 "use client";
 
 import React, {  useEffect, useState } from 'react';
-import { calculateFinalAngle, describeArc, startTimer } from '@/lib/action/Wheel.action';
+import { calculateFinalAngle, describeArc, startTimer, spinWheel } from '@/lib/action/Wheel.action';
 
 type Player = {
   name: string;
@@ -20,17 +20,48 @@ const WheelOfFortune: React.FC<WheelOfFortuneProps> = ({ players }) => {
   // Autres états
   const [finalAngle, setFinalAngle] = useState(0);
   const [isSpinning, setIsSpinning] = useState(false);
+  const [transitionClass, setTransitionClass] = useState('transition-transform duration-6000 ease-out');
   const wheelSize = 450;
   const radius = wheelSize / 2;
   const innerRadius = radius * 0.65; // Taille du trou intérieur
 
     // Fonction pour démarrer la rotation de la roue
-    const spinWheel = async () => {
+    const spinWheelClient = async () => {
       setIsSpinning(true);
-      const final = await calculateFinalAngle(finalAngle)
-      setFinalAngle(final); // Calcul de l'angle et ajouter à l'angle actuel
-      setTimeout(() => {setIsSpinning(false)}, 6000); // Durée de la rotation
+      
+      let currentAngle = 0;
+      const final = await spinWheel(finalAngle);
+      const duration = 8000;
+      const startTime = Date.now();
+    
+      const easeInOutCubic = (t : number) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    
+      const animate = () => {
+        const now = Date.now();
+        const elapsedTime = now - startTime;
+        const progress = elapsedTime / duration;
+    
+        if (progress < 1) {
+          currentAngle = final * easeInOutCubic(progress);
+          setFinalAngle(currentAngle);
+          requestAnimationFrame(animate);
+        } else {
+          // Désactiver la transition avant de fixer l'angle final
+          setTransitionClass('');
+          setFinalAngle(final);
+    
+          // Réactiver la transition après un bref délai
+          setTimeout(() => {
+            setTransitionClass('transition-transform duration-6000');
+            setIsSpinning(false);
+          }, 50); // Délai de 50ms avant de réactiver la transition
+        }
+      };
+    
+      requestAnimationFrame(animate);
     };
+    
+    
 
   //A UPDATE A CHAQUE NOUVEAU BET Générer les chemins SVG pour chaque joueur
   let startAngle = 0;
@@ -66,37 +97,23 @@ const WheelOfFortune: React.FC<WheelOfFortuneProps> = ({ players }) => {
 
 // Ajouter une fonction pour démarrer et mettre à jour le timer
 const startAndUpdateTimer = async () => {
-  const getRemainingTime = await startTimer(30);
+  const getRemainingTime = await startTimer();
   const timerInterval = setInterval(() => {
     const remainingTime = getRemainingTime();
     setTimer(remainingTime);
     if (remainingTime <= 0) {
       clearInterval(timerInterval);
+      spinWheelClient();
     }
   }, 1000);
 };
 
-  const renderTotalPot = () => {
-    return (
-      <text
-        x="50%" 
-        y="50%" 
-        textAnchor="middle" 
-        dy=".3em" // Ajuster selon la taille de votre police
-        fill="#fff" // Couleur du texte
-        style={{
-          fontSize: '20px', // Taille de la police
-          userSelect: 'none', // Empêcher la sélection du texte
-        }}
-      >
-        {totalPot}
-      </text>
-    );
-  };
-
   return (
     <div className='relative wheel-container'>
-      <svg width={wheelSize} height={wheelSize} viewBox={`0 0 ${wheelSize} ${wheelSize}`} style={{ transform: `rotate(${finalAngle}deg)`, transition: 'transform 6s ease-out' }}>
+      <svg width={wheelSize} height={wheelSize} 
+          viewBox={`0 0 ${wheelSize} ${wheelSize}`} 
+          style={{ transform: `rotate(${finalAngle}deg)` }}
+          className={transitionClass}>
         {paths}
       </svg>
       <svg 
@@ -164,7 +181,6 @@ const startAndUpdateTimer = async () => {
         </text>
         
       </svg>
-      <button onClick={spinWheel} className="bg-gray-500 text-white p-2 rounded-lg absolute bottom-10 left-1/2 transform -translate-x-1/2">Spin</button>
     </div>
   );
 };

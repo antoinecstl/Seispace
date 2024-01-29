@@ -6,8 +6,15 @@ export async function calculateFinalAngle (finalAngle: number) {
   return calcAngle ;
 };
 
-export async function startTimer(duration: number) {
-  let remaining = duration;
+
+
+export const spinWheel = async (finalAngle: number) => {
+  const final = await calculateFinalAngle(finalAngle)
+  return final
+}
+
+export async function startTimer() {
+  let remaining = 30;
   const intervalId = setInterval(() => {
     remaining--;
     if (remaining <= 0) {
