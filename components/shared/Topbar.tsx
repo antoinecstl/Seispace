@@ -9,7 +9,7 @@ function Topbar() {
   return (
     <nav className='topbar mt-2'>
         <Link href='/' className='flex items-center gap-4'>
-            <Image src='/target.svg' alt='logo' width={32} height={32} />
+            <Image src='/target.svg' alt='logo' width={40} height={40}/>
             <p className='text-heading3-bold text-light-1'>Sei-Fi</p>
         </Link>
 

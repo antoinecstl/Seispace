@@ -7,17 +7,22 @@ export const sidebarLinks = [
   {
     imgURL: "/rocket.svg",
     route: "/big",
-    label: "Big",
+    label: "Whale",
   },
   {
     imgURL: "/plane.svg",
     route: "/medium",
-    label: "Medium",
+    label: "Fish",
   },
   {
     imgURL: "/car.svg",
     route: "/small",
-    label: "Small",
+    label: "Shrimp",
+  },
+  {
+    imgURL: "/gift.svg",
+    route: "/WL&GW",
+    label: "WL & Giveaway",
   },
 ];
 

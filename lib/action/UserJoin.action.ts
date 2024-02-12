@@ -1,18 +1,13 @@
-import { supabase } from "@/app/api/supabase/supabaseclient";
+import { supabase } from "@/app/api/supabase/supabaseClient";
 
-interface Player {
-  wallets_addr: string; // Assurez-vous que cela correspond au type de données dans Supabase
-  bet_amount: number;
-  color?: string; // Ajout du champ couleur qui est optionnel
-}
-
-export async function handleUserBet(wallets_addr: string, bet_amount: number) {
+export async function handleUserBet(wallets_address: string, bet_amount: number) {
   // Vérifier si l'utilisateur existe déjà dans la table players_data
   let { data: existingPlayer, error: selectError } = await supabase
-    .from('players_data')
-    .select('id, bet_amount')
-    .eq('wallets_addr', wallets_addr)
-    .single();
+  .from('players_data')
+  .select('id, bet_amount')
+  .eq('wallets_address', wallets_address)
+  .maybeSingle();
+
 
   if (selectError) {
     console.error(selectError);
@@ -31,7 +26,6 @@ export async function handleUserBet(wallets_addr: string, bet_amount: number) {
       throw updateError;
     }
     
-    console.log(`User ${wallets_addr} has updated bet to ${updatedPlayer?.bet_amount} $SEI`);
   } else {
     // Générer une couleur aléatoire pour le nouveau joueur
     const color = generateRandomColor();
@@ -40,7 +34,7 @@ export async function handleUserBet(wallets_addr: string, bet_amount: number) {
     const { data: newPlayer, error: insertError } = await supabase
       .from('players_data')
       .insert([
-        { wallets_addr: wallets_addr, bet_amount: bet_amount, color: color }
+        { wallets_address: wallets_address, bet_amount: bet_amount, color: color }
       ]);
 
     if (insertError) {
@@ -48,7 +42,7 @@ export async function handleUserBet(wallets_addr: string, bet_amount: number) {
       throw insertError;
     }
 
-    console.log(`User ${wallets_addr} has bet ${bet_amount} $SEI with color ${color}`);
+    console.log(`User ${wallets_address} has bet ${bet_amount} $SEI with color ${color}`);
   }
 }
 
