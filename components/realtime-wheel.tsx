@@ -78,6 +78,24 @@ export default function RealtimeWheel ({ transitionClass, finalAngle, timer}: Re
         }
     }, [supabase])
 
+    useEffect(() => {
+        fetchPlayers();
+
+        const channel = supabase.channel('game_time').on('postgres_changes', {
+            event: '*',
+            schema: 'public',
+            table: "game_start"
+        }, (payload) => {
+            console.log('New game started:', payload.new);
+        // Ici, vous pouvez déclencher la logique de démarrage du jeu dans l'UI
+        }).subscribe()
+
+        return () => {
+            supabase.removeChannel(channel);
+        }
+    }, [supabase])
+      
+
     return <section className='grid xl:gap-4 xl:grid-cols-2 xl:gap-12 justify-center'>
             <div className='relative mx-auto'>
             <svg width={wheelSize} height={wheelSize}

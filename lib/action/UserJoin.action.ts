@@ -29,12 +29,13 @@ export async function handleUserBet(wallets_address: string, bet_amount: number)
   } else {
     // Générer une couleur aléatoire pour le nouveau joueur
     const color = generateRandomColor();
+    const wheel_number = 1;
 
     // Ajouter un nouveau joueur
     const { data: newPlayer, error: insertError } = await supabase
       .from('players_data')
       .insert([
-        { wallets_address: wallets_address, bet_amount: bet_amount, color: color }
+        { wallets_address: wallets_address, bet_amount: bet_amount, color: color , wheel_number: wheel_number}
       ]);
 
     if (insertError) {
