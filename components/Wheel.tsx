@@ -1,16 +1,18 @@
 "use client";
 
-import React, {  useEffect, useState } from 'react';
-import { describeArc, startTimer, spinWheel } from '@/lib/action/Wheel.action';
+import React, { useEffect, useState } from 'react';
+import { spinWheel } from '@/lib/action/Wheel.action';
 import RealtimeWheel from './realtime-wheel';
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+
 
 const WheelOfFortune: React.FC = () => {
-  
-
-  // Autres états
   const [finalAngle, setFinalAngle] = useState(0);
   const [isSpinning, setIsSpinning] = useState(false);
   const [transitionClass, setTransitionClass] = useState('transition-transform duration-6000 ease-out');
+  const [timer, setTimer] = useState(30); // Ce timer sera mis à jour par RealtimeWheel
+  const [gameStartTime, setGameStartTime] = useState<number | null>(null);
+  const supabase = createClientComponentClient();
 
 
     // Fonction pour démarrer la rotation de la roue
@@ -47,29 +49,35 @@ const WheelOfFortune: React.FC = () => {
       requestAnimationFrame(animate);
     };
     
-
-  const [timer, setTimer] = useState(30);
+  // Souscrire à la table game_start pour obtenir le start_time
   useEffect(() => {
-    startAndUpdateTimer();
-  }, []);
+    const channel = supabase.channel('game_time')
+        .on('postgres_changes', {
+            event: '*',
+            schema: 'public',
+            table: "game_start"
+        }, (payload) => {
+            const startTime = new Date(payload.new.start_time).getTime();
+            setGameStartTime(startTime);
+        })
+        .subscribe();
+
+    return () => {
+        supabase.removeChannel(channel);
+    }
+  }, [supabase]);
+
   
 
-// Ajouter une fonction pour démarrer et mettre à jour le timer
-const startAndUpdateTimer = async () => {
-  const getRemainingTime = await startTimer();
-  const timerInterval = setInterval(() => {
-    const remainingTime = getRemainingTime();
-    setTimer(remainingTime);
-    if (remainingTime <= 0) {
-      clearInterval(timerInterval);
-      spinWheelClient();
-    }
-  }, 1000);
-};
-
   return (
-    <RealtimeWheel transitionClass={transitionClass} finalAngle={finalAngle} timer={timer}/>
-  );
+    <RealtimeWheel 
+        transitionClass={transitionClass} 
+        finalAngle={finalAngle} 
+        timer={timer}
+        gameStartTime={gameStartTime} // Passer gameStartTime comme prop
+        setTimer={setTimer} // Passer setTimer pour permettre à RealtimeWheel de le mettre à jour
+        spinWheelClient={spinWheelClient} // Passer spinWheelClient pour lancer la rotation
+    />
+);
 };
-
 export default WheelOfFortune;

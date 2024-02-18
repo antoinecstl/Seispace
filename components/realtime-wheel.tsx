@@ -3,7 +3,6 @@
 import RightSidebar from "./shared/RightSidebar";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { Key, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { describeArc } from "@/lib/action/Wheel.action";
 import { Player } from "@/lib/schema/playerdata.Schema";
 
@@ -11,13 +10,27 @@ type RealtimeWheelProps = {
     transitionClass: string;
     finalAngle: number;
     timer: number;
-  };
+    gameStartTime: number | null;
+    setTimer: React.Dispatch<React.SetStateAction<number>>;
+    spinWheelClient: () => void;
+};
 
-export default function RealtimeWheel ({ transitionClass, finalAngle, timer}: RealtimeWheelProps) {
+
+export default function RealtimeWheel ({
+    transitionClass,
+    finalAngle,
+    timer,
+    gameStartTime,
+    setTimer,
+    spinWheelClient
+}: RealtimeWheelProps) {
+
     const supabase = createClientComponentClient()
     const [lastBet, setLastBet] = useState<{ address: string; amount: number; color: string } | null>(null);
     const [players, setPlayers] = useState<Player[]>([]);
+    const [playersCount, setPlayersCount] = useState(0);
     const [totalPot, setTotalPot] = useState(0);
+    const [isWheelSpinning, setIsWheelSpinning] = useState(false);
     const wheelSize = 450;
     const radius = wheelSize / 2;
     const innerRadius = radius * 0.65; // Taille du trou intérieur
@@ -37,8 +50,11 @@ export default function RealtimeWheel ({ transitionClass, finalAngle, timer}: Re
       setPlayers(data);
       const pot = data.reduce((acc, player) => acc + player.bet_amount, 0);
       setTotalPot(pot);
+      setPlayersCount(data.length)
     }
   };
+
+  const missingPlayers = Math.max(0, 2 - playersCount); // Calculez le nombre de joueurs manquants
   
   let startAngle = 0;
   const paths = players.map(player => {
@@ -78,22 +94,25 @@ export default function RealtimeWheel ({ transitionClass, finalAngle, timer}: Re
         }
     }, [supabase])
 
+    // Mettre à jour le timer basé sur le gameStartTime
     useEffect(() => {
-        fetchPlayers();
+        if (gameStartTime) {
+            const interval = setInterval(() => {
+                const now = Date.now();
+                const timeElapsed = Math.floor((now - gameStartTime) / 1000);
+                const timeLeft = 30 - timeElapsed;
+                if (timeLeft >= 0) {
+                    setTimer(timeLeft);
+                } else if (timer === 0 && !isWheelSpinning) {
+                    clearInterval(interval);
+                    setIsWheelSpinning(true);
+                    spinWheelClient(); // Lancer la rotation de la roue coté client
+                }
+            }, 1000);
 
-        const channel = supabase.channel('game_time').on('postgres_changes', {
-            event: '*',
-            schema: 'public',
-            table: "game_start"
-        }, (payload) => {
-            console.log('New game started:', payload.new);
-        // Ici, vous pouvez déclencher la logique de démarrage du jeu dans l'UI
-        }).subscribe()
-
-        return () => {
-            supabase.removeChannel(channel);
+            return () => clearInterval(interval);
         }
-    }, [supabase])
+    }, [gameStartTime, setTimer, spinWheelClient]);
       
 
     return <section className='grid xl:gap-4 xl:grid-cols-2 xl:gap-12 justify-center'>
@@ -115,9 +134,11 @@ export default function RealtimeWheel ({ transitionClass, finalAngle, timer}: Re
                 transform: 'translateX(-50%) rotate(180deg)',
             }}
             >
+            {playersCount >= 2 ? (
             <polygon
                 points={`${20 * Math.sqrt(3) / 2 / 2},0 ${20 * Math.sqrt(3) / 2}, ${20} 0,${20}`}
-                fill="red" />
+                fill="#7e89ff" />
+            ) : null}
             </svg>
             <svg
             className="absolute"
@@ -125,6 +146,20 @@ export default function RealtimeWheel ({ transitionClass, finalAngle, timer}: Re
             height={wheelSize}
             style={{ top: 0, left: 0 }}
             >
+            {playersCount < 2 ? (
+                    <>
+                        <text
+                            x="50%"
+                            y="25%"
+                            textAnchor="middle"
+                            fill="#fff"
+                            style={{ fontSize: '28px', userSelect: 'none' }}
+                        >
+                            {missingPlayers} player{missingPlayers === 1 ? '' : 's'} missing...
+                        </text>
+                    </>
+                ) : null}
+
             <text
                 x="50%"
                 y="35%"
@@ -133,7 +168,7 @@ export default function RealtimeWheel ({ transitionClass, finalAngle, timer}: Re
                 fill="#7878A3"
                 style={{ fontSize: '13px', userSelect: 'none' }}
             >
-                Total Value
+                Total Pot
 
             </text>
             <text
@@ -145,34 +180,34 @@ export default function RealtimeWheel ({ transitionClass, finalAngle, timer}: Re
                 style={{ fontSize: '28px', userSelect: 'none' }}>
                 {totalPot} $Sei
             </text>
-            <text
-                x="50%"
-                y="56%"
-                textAnchor="middle"
-                dy=".3em"
-                fill="#7878A3"
-                style={{ fontSize: '13px', userSelect: 'none' }}
-            >
-                CountDown
-            </text>
-
-            <text
-                x="50%"
-                y="65%"
-                textAnchor="middle"
-                dy=".3em"
-                fill="#fff"
-                style={{ fontSize: '26px', userSelect: 'none' }}
-            >
-                {timer > 0 ? `${Math.floor(timer / 60)}:${timer % 60 < 10 ? `0${timer % 60}` : timer % 60}` : "Time's up"}
-            </text>
+            {playersCount >= 2 ? (
+            <><text
+                        x="50%"
+                        y="56%"
+                        textAnchor="middle"
+                        dy=".3em"
+                        fill="#7878A3"
+                        style={{ fontSize: '13px', userSelect: 'none' }}
+                    >
+                        CountDown
+                    </text><text
+                        x="50%"
+                        y="65%"
+                        textAnchor="middle"
+                        dy=".3em"
+                        fill="#fff"
+                        style={{ fontSize: '26px', userSelect: 'none' }}
+                    >
+                            {timer > 0 ? `${Math.floor(timer / 60)}:${timer % 60 < 10 ? `0${timer % 60}` : timer % 60}` : "Time's up"}
+                        </text></>
+            ):null}
 
             </svg>
             </div>
             <RightSidebar players={players} totalPot={totalPot}/>
         
             {lastBet && (
-                <p className="text-heading4-medium text-light-1">Last bet: {lastBet.amount} $SEI by {lastBet.address} (Couleur: <span style={{ color: lastBet.color }}>{lastBet.color}</span>)</p>
+                <p className="text-light-1 mt-4">{lastBet.amount} $SEI bet by <span style={{color: lastBet.color}}>{lastBet.address}</span> </p>
             )}
             </section>
 
