@@ -54,6 +54,13 @@ export default function RealtimeWheel ({
     }
   };
 
+  const formatWalletAddress = (address: string) => {
+    if (address.length > 10) {
+      return `${address.slice(0, 10)}.......${address.slice(-8)}`;
+    }
+    return address;
+  };
+
   const missingPlayers = Math.max(0, 2 - playersCount); // Calculez le nombre de joueurs manquants
   
   let startAngle = 0;

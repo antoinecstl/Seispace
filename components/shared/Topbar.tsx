@@ -15,10 +15,10 @@ function Topbar() {
 
         <div className='flex items-center gap-1 text-white'>
             <div className='flex gap-6 mr-4'>
-                <Link href='https://twitter.com/SeiSpaceHub' className="mt-1 hover:opacity-50 duration-300">
+                <Link href='https://twitter.com/SeiFiNFT' className="mt-1 hover:opacity-50 duration-300">
                     <Image src='/X_logo_2023.svg' alt='logo' width={26} height={26}/>
                 </Link>
-                <Link href='https://twitter.com/SeiSpaceHub' className="hover:opacity-50 duration-300">
+                <Link href='https://discord.gg/seifi' className="hover:opacity-50 duration-300">
                     <Image src='/discord.svg' alt='logo' width={30} height={30}/>
                 </Link>
             </div>

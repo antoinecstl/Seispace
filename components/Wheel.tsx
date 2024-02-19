@@ -49,19 +49,24 @@ const WheelOfFortune: React.FC = () => {
       requestAnimationFrame(animate);
     };
     
+    interface GameStartPayload {
+      new: {
+        start_time: string;
+      };
+    }
+    
+  
   // Souscrire à la table game_start pour obtenir le start_time
   useEffect(() => {
-    const channel = supabase.channel('game_time')
-        .on('postgres_changes', {
-            event: '*',
+    const channel = supabase.channel('game_time').on('postgres_changes' as any, {
+            event: '*' as any,
             schema: 'public',
             table: "game_start"
-        }, (payload) => {
+        }, (payload: GameStartPayload) => {
             const startTime = new Date(payload.new.start_time).getTime();
             setGameStartTime(startTime);
-        })
-        .subscribe();
-
+        }).subscribe();
+  
     return () => {
         supabase.removeChannel(channel);
     }
