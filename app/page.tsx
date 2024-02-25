@@ -46,20 +46,20 @@ export default function Home() {
           <Wheel />
         </div>
         <div className="flex justify-center">
-          <div className='grid grid-cols-3 gap-2 sm:gap-4'>
+          <div className='hidden sm:grid grid-cols-3 gap-4'>
             <button onClick={() => handleSetBetAmount('25')} className="transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-110 bg-primary-600 text-light-1 border border-primary-600 hover:border-white text-small-medium sm:text-body-semibold hover:bg-primary-500 duration-200 px-1 sm:p-2 rounded-lg">25 $SEI</button>
             <button onClick={() => handleSetBetAmount('10')} className="transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-110 bg-primary-600 text-light-1 border border-primary-600 hover:border-white text-small-medium sm:text-body-semibold hover:bg-primary-500 duration-200 sm:p-2 rounded-lg">10 $SEI</button>
             <button onClick={() => handleSetBetAmount('5')} className="transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-110 bg-primary-600 text-light-1 border border-primary-600 hover:border-white text-small-medium sm:text-body-semibold hover:bg-primary-500 duration-200 sm:p-2 rounded-lg">5 $SEI</button>
           </div>
           <input
-            className="py-2 sm:p-2 mx-2 sm:mx-4 rounded-lg bg-slate-950 text-center w-36 sm:w-44 text-light-1 text-small-medium sm:text-body-medium border border-primary-500 hover:border-white"
+            className="py-2 sm:p-2 mx-2 sm:mx-4 rounded-lg bg-slate-950 text-center w-44 text-light-1 text-base-medium sm:text-body-medium border border-primary-500 hover:border-white"
             type="number"
             placeholder="$SEI Bet Amount"
             value={betAmount}
             onChange={(e) => handleSetBetAmount(e.target.value)}
             min="0" // Ajoutez cet attribut pour empêcher la saisie de valeurs négatives directement dans le champ
           />
-          <button onClick={submitBet} className="transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-110 bg-primary-600 w-20 text-light-1 border border-primary-600 hover:border-white text-small-medium sm:text-body-semibold hover:bg-red-500 duration-200 sm:p-2 rounded-lg">BET</button>
+          <button onClick={submitBet} className="transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-110 bg-primary-600 w-20 text-light-1 border border-primary-600 hover:border-white text-body-medium sm:text-body-semibold hover:bg-red-500 duration-200 sm:p-2 rounded-lg">BET</button>
         </div>
       </section>
     </main>
