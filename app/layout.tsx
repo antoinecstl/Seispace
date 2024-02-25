@@ -5,6 +5,7 @@ import "./globals.css";
 import Topbar from "@/components/shared/Topbar";
 import LeftSidebar from "@/components/shared/LeftSidebar";
 import { SeiWalletProvider } from "@sei-js/react";
+import Bottombar from "@/components/shared/Bottombar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -33,6 +34,7 @@ export default function RootLayout({
             </section>
             {/* @ts-ignore */}
           </main>
+          <Bottombar/>
         </SeiWalletProvider>
       </body>
     </html></>
