@@ -12,7 +12,7 @@ export default function dash() {
   return (
     <main className="flex flex-col items-center justify-center">
       <section className="text-center">
-    
+      <p>test</p>
         
       </section>
     </main>
