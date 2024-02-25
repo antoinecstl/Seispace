@@ -9,7 +9,7 @@ body {
 @layer components {
   /* main */
   .main-container {
-    @apply flex min-h-screen flex-1 flex-col items-center bg-gray-950 max-md:pb-32 sm:px-10;
+    @apply flex min-h-screen flex-1 flex-col items-center bg-gray-950 max-md:pb-32 sm:px-4;
   }
 
   /* Head Text */
@@ -91,11 +91,11 @@ body {
   }
 
   .leftsidebar {
-    @apply sticky right-0 top-[145px] max-lg:top-[250px] z-20 flex max-h-fit w-fit flex-col justify-between overflow-auto py-4 rounded-xl ml-6 mt-14 max-md:hidden;
+    @apply sticky right-0 top-[145px] z-20 flex max-h-fit w-fit flex-col justify-between overflow-auto py-4 rounded-xl ml-6 mt-14 max-md:hidden;
   }
 
   .leftsidebar_link {
-    @apply relative flex justify-start gap-4 rounded-xl p-4;
+    @apply relative flex justify-center lg:justify-start gap-4 rounded-xl p-4;
   }
 
   .rightsidebar {

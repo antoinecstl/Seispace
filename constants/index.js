@@ -22,7 +22,7 @@ export const sidebarLinks = [
   {
     imgURL: "/gift.svg",
     route: "/WL&GW",
-    label: "WL & Giveaway",
+    label: "Special",
   },
 ];
 

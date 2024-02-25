@@ -31,9 +31,35 @@ export default function RealtimeWheel ({
     const [playersCount, setPlayersCount] = useState(0);
     const [totalPot, setTotalPot] = useState(0);
     const [isWheelSpinning, setIsWheelSpinning] = useState(false);
-    const wheelSize = 450;
+    const [wheelSize, setWheelSize] = useState(450);
     const radius = wheelSize / 2;
     const innerRadius = radius * 0.65; // Taille du trou intérieur
+
+    useEffect(() => {
+        // Fonction pour mettre à jour la taille de la roue en fonction de la largeur de l'écran
+        const updateWheelSize = () => {
+            const screenWidth = window.innerWidth;
+
+            if(screenWidth < 640) { // Taille pour 'sm'
+                setWheelSize(360);
+            } else if(screenWidth >= 640 && screenWidth < 768) { // Taille pour 'md'
+                setWheelSize(400);
+            } else if(screenWidth >= 768 && screenWidth < 1024) { // Taille pour 'lg'
+                setWheelSize(410);
+            } else if(screenWidth >= 1024 && screenWidth < 1280) { // Taille pour 'lg'
+                setWheelSize(420);
+            } else { // Taille pour 'xl' et plus
+                setWheelSize(450);
+            }
+        };
+        updateWheelSize(); // Appel initial
+
+        // Écouter les changements de taille de l'écran
+        window.addEventListener('resize', updateWheelSize);
+
+        // Nettoyage de l'effet
+        return () => window.removeEventListener('resize', updateWheelSize);
+    }, []);
 
   // Fonction pour récupérer les joueurs depuis Supabase
   const fetchPlayers = async () => {
@@ -52,13 +78,6 @@ export default function RealtimeWheel ({
       setTotalPot(pot);
       setPlayersCount(data.length)
     }
-  };
-
-  const formatWalletAddress = (address: string) => {
-    if (address.length > 10) {
-      return `${address.slice(0, 10)}.......${address.slice(-8)}`;
-    }
-    return address;
   };
 
   const missingPlayers = Math.max(0, 2 - playersCount); // Calculez le nombre de joueurs manquants
@@ -122,100 +141,96 @@ export default function RealtimeWheel ({
     }, [gameStartTime, setTimer, spinWheelClient]);
       
 
-    return <section className='grid xl:gap-4 xl:grid-cols-2 xl:gap-12 justify-center'>
+    return <section className='grid xl:grid-cols-2 xl:gap-20 text-left justify-center'>
             <div className='relative mx-auto'>
-            <svg width={wheelSize} height={wheelSize}
-            viewBox={`0 0 ${wheelSize} ${wheelSize}`}
-            style={{ transform: `rotate(${finalAngle}deg)` }}
-            className={transitionClass}>
-            {paths}
-            </svg>
-            <svg
-            width={20 * Math.sqrt(3) / 2}
-            height={20}
-            viewBox={`0 0 ${20 * Math.sqrt(3) / 2} ${20}`}
-            style={{
-                position: 'absolute',
-                top: '-20px',
-                left: '50%',
-                transform: 'translateX(-50%) rotate(180deg)',
-            }}
-            >
-            {playersCount >= 2 ? (
-            <polygon
-                points={`${20 * Math.sqrt(3) / 2 / 2},0 ${20 * Math.sqrt(3) / 2}, ${20} 0,${20}`}
-                fill="#7e89ff" />
-            ) : null}
-            </svg>
-            <svg
-            className="absolute"
-            width={wheelSize}
-            height={wheelSize}
-            style={{ top: 0, left: 0 }}
-            >
-            {playersCount < 2 ? (
-                    <>
-                        <text
-                            x="50%"
-                            y="25%"
-                            textAnchor="middle"
-                            fill="#fff"
-                            style={{ fontSize: '28px', userSelect: 'none' }}
-                        >
-                            {missingPlayers} player{missingPlayers === 1 ? '' : 's'} missing...
-                        </text>
-                    </>
-                ) : null}
+                <svg width={wheelSize} height={wheelSize}
+                    viewBox={`0 0 ${wheelSize} ${wheelSize}`}
+                    style={{ transform: `rotate(${finalAngle}deg)` }}
+                    className={transitionClass}>
+                    {paths}
+                    </svg>
+                    <svg
+                    width={20 * Math.sqrt(3) / 2}
+                    height={20}
+                    viewBox={`0 0 ${20 * Math.sqrt(3) / 2} ${20}`}
+                    style={{
+                        position: 'absolute',
+                        top: '-20px',
+                        left: '50%',
+                        transform: 'translateX(-50%) rotate(180deg)',
+                    }}
+                    >
+                    {playersCount >= 2 ? (
+                    <polygon
+                        points={`${20 * Math.sqrt(3) / 2 / 2},0 ${20 * Math.sqrt(3) / 2}, ${20} 0,${20}`}
+                        fill="#7e89ff" />
+                    ) : null}
+                    </svg>
+                    <svg
+                    className="absolute"
+                    width={wheelSize}
+                    height={wheelSize}
+                    style={{ top: 0, left: 0 }}
+                    >
+                    {playersCount < 2 ? (
+                            <>
+                                <text
+                                    x="50%"
+                                    y="25%"
+                                    textAnchor="middle"
+                                    fill="#fff"
+                                    style={{ fontSize: '28px', userSelect: 'none' }}
+                                >
+                                    {missingPlayers} player{missingPlayers === 1 ? '' : 's'} missing...
+                                </text>
+                            </>
+                        ) : null}
 
-            <text
-                x="50%"
-                y="35%"
-                textAnchor="middle"
-                dy=".3em"
-                fill="#7878A3"
-                style={{ fontSize: '13px', userSelect: 'none' }}
-            >
-                Total Pot
-
-            </text>
-            <text
-                x="52%"
-                y="44%"
-                textAnchor="middle"
-                dy=".3em"
-                fill="#fff"
-                style={{ fontSize: '28px', userSelect: 'none' }}>
-                {totalPot} $Sei
-            </text>
-            {playersCount >= 2 ? (
-            <><text
+                    <text
                         x="50%"
-                        y="56%"
+                        y="35%"
                         textAnchor="middle"
                         dy=".3em"
                         fill="#7878A3"
                         style={{ fontSize: '13px', userSelect: 'none' }}
                     >
-                        CountDown
-                    </text><text
-                        x="50%"
-                        y="65%"
+                        Total Pot
+
+                    </text>
+                    <text
+                        x="52%"
+                        y="44%"
                         textAnchor="middle"
                         dy=".3em"
                         fill="#fff"
-                        style={{ fontSize: '26px', userSelect: 'none' }}
-                    >
-                            {timer > 0 ? `${Math.floor(timer / 60)}:${timer % 60 < 10 ? `0${timer % 60}` : timer % 60}` : "Time's up"}
-                        </text></>
-            ):null}
+                        style={{ fontSize: '28px', userSelect: 'none' }}>
+                        {totalPot} $Sei
+                    </text>
+                    {playersCount >= 2 ? (
+                    <><text
+                                x="50%"
+                                y="56%"
+                                textAnchor="middle"
+                                dy=".3em"
+                                fill="#7878A3"
+                                style={{ fontSize: '13px', userSelect: 'none' }}
+                            >
+                                CountDown
+                            </text><text
+                                x="50%"
+                                y="65%"
+                                textAnchor="middle"
+                                dy=".3em"
+                                fill="#fff"
+                                style={{ fontSize: '26px', userSelect: 'none' }}
+                            >
+                                    {timer > 0 ? `${Math.floor(timer / 60)}:${timer % 60 < 10 ? `0${timer % 60}` : timer % 60}` : "Time's up"}
+                                </text></>
+                    ):null}
 
-            </svg>
+                </svg>
             </div>
-            <RightSidebar players={players} totalPot={totalPot}/>
-        
-            {lastBet && (
-                <p className="text-light-1 mt-4">{lastBet.amount} $SEI bet by <span style={{color: lastBet.color}}>{lastBet.address}</span> </p>
-            )}
+            <RightSidebar players={players} totalPot={totalPot} lastbet={lastBet}/>
             </section>
 
 }

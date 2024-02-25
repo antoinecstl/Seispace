@@ -5,6 +5,7 @@ import { Player } from '@/lib/schema/playerdata.Schema'; // Assurez-vous que le 
 type RightSidebarProps = {
   players: Player[];
   totalPot: number;
+  lastbet:{ address: string; amount: number; color: string } | null;
 };
 
 // Fonction pour formatter l'adresse du portefeuille
@@ -15,7 +16,7 @@ const formatWalletAddress = (address: string) => {
   return address;
 };
 
-const RightSidebar: React.FC<RightSidebarProps> = ({ players, totalPot }) => {
+const RightSidebar: React.FC<RightSidebarProps> = ({ players, totalPot, lastbet }) => {
   const sortedPlayers = [...players].sort((a, b) => {
     const percentageOfPotA = totalPot > 0 ? (a.bet_amount / totalPot) * 100 : 0;
     const percentageOfPotB = totalPot > 0 ? (b.bet_amount / totalPot) * 100 : 0;
@@ -28,16 +29,24 @@ const RightSidebar: React.FC<RightSidebarProps> = ({ players, totalPot }) => {
       <div key={index} className='flex items-center gap-2'>
         <span className='block w-4 h-4 rounded-full' style={{ backgroundColor: player.color }}></span>
         <p className='text-white'>{percentageOfPot}% - {player.bet_amount} $SEI</p>
-        <p className='text-light-3 hidden lg:inline xl:hidden 2xl:inline'>{player.wallets_address}</p>
-        <p className='text-light-3 lg:hidden xl:inline 2xl:hidden'>{formatWalletAddress(player.wallets_address)}</p>
+        <p className='text-light-3 hidden md:inline min-[1280px]:hidden 2xl:inline'>{player.wallets_address}</p>
+        <p className='text-light-3 md:hidden min-[1280px]:inline 2xl:hidden'>{formatWalletAddress(player.wallets_address)}</p>
       </div>
     );
   });
 
   return (
-    <section className='pt-4 max-xl:pt-10 max-xl:px-2'>
-      <div className='flex flex-1 flex-col justify-start'>
-        <h3 className='text-heading4-medium max-xl:text-body-medium text-light-1'>
+    <section className='pt-4 xl:pt-10 max-xl:px-2'>
+      <div className='flex flex-col justify-center items-center'>
+      {lastbet && (
+        <><h3 className='text-heading4-medium max-xl:text-body-medium text-light-1'>
+            Last Bet
+          </h3>
+          <p className="text-white mt-2">{lastbet.amount} $SEI by 
+          <span className='hidden sm:inline min-[1280px]:hidden 2xl:inline' style={{ color: lastbet.color }}> {lastbet.address}</span> 
+          <span className='sm:hidden min-[1280px]:inline 2xl:hidden' style={{ color: lastbet.color }}> {formatWalletAddress(lastbet.address)}</span> 
+          </p></>)}
+        <h3 className='mt-4 text-heading4-medium max-xl:text-body-medium text-light-1'>
           Players
         </h3>
         <div className='mt-4 '>

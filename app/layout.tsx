@@ -28,8 +28,8 @@ export default function RootLayout({
 
           <main className='flex flex-row'>
             <LeftSidebar />
-            <section className='main-container mt-4 mb-8'>
-              <div className='w-full max-w-6xl'>{children}</div>
+            <section className='main-container mt-4 mb-4'>
+              <div className='w-full'>{children}</div>
             </section>
             {/* @ts-ignore */}
           </main>
