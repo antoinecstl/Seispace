@@ -16,10 +16,10 @@ function Topbar() {
         <div className='flex items-center gap-1 text-white'>
             <div className='flex gap-6 mr-4'>
                 <Link href='https://twitter.com/SeiFiNFT' className="mt-1 hover:opacity-50 duration-300">
-                    <Image className="hidden sm:inline" src='/X_logo_2023.svg' alt='logo' width={26} height={26}/>
+                    <Image className="hidden sm:inline" src='/X_logo_2023.svg' alt='logo' width={25} height={25}/>
                 </Link>
                 <Link href='https://discord.gg/seifi' className="hover:opacity-50 duration-300">
-                    <Image className="hidden sm:inline" src='/discord.svg' alt='logo' width={30} height={30}/>
+                    <Image className="hidden sm:inline" src='/discord.svg' alt='logo' width={31} height={31}/>
                 </Link>
             </div>
             <div className="bg-primary-600 hover:bg-primary-500 duration-300 px-2 py-1 rounded-xl">

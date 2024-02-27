@@ -105,6 +105,7 @@ export default function RealtimeWheel ({
 
             // Traiter le payload pour les mises à jour et les insertions
             if (payload.eventType === 'INSERT' || payload.eventType === 'UPDATE') {
+                console.log(payload)
                 const newBetInfo = {
                     address: payload.new.wallets_address,
                     amount: payload.new.bet_amount,
@@ -215,7 +216,7 @@ export default function RealtimeWheel ({
                                 fill="#7878A3"
                                 style={{ fontSize: '13px', userSelect: 'none' }}
                             >
-                                CountDown
+                                Countdown
                             </text><text
                                 x="50%"
                                 y="65%"

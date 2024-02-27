@@ -62,8 +62,8 @@ const sortedPlayers = currentUserPlayer ? [currentUserPlayer, ...sortedOtherPlay
           <>
             <h3 className='text-heading4-medium max-xl:text-body-medium text-light-1'>Last Bet</h3>
             <p className="text-white mt-2 ">{lastbet.amount} $SEI by 
-            <span className='md:hidden min-[1280px]:inline 2xl:hidden' style={{ color: lastbet.color }}>{formatWalletAddress(lastbet.address)}</span>
-            <span className='hidden md:inline min-[1280px]:hidden 2xl:inline' style={{ color: lastbet.color }}>{lastbet.address}</span>
+            <span className='md:hidden min-[1280px]:inline 2xl:hidden' style={{ color: lastbet.color }}> {formatWalletAddress(lastbet.address)}</span>
+            <span className='hidden md:inline min-[1280px]:hidden 2xl:inline' style={{ color: lastbet.color }}> {lastbet.address}</span>
             </p>
           </>
         )}
