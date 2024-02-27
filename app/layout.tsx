@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { Inter } from "next/font/google";
 import "./globals.css";
@@ -6,6 +6,7 @@ import Topbar from "@/components/shared/Topbar";
 import LeftSidebar from "@/components/shared/LeftSidebar";
 import { SeiWalletProvider } from "@sei-js/react";
 import Bottombar from "@/components/shared/Bottombar";
+import { usePathname } from "next/navigation";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -14,6 +15,9 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const pathname = usePathname();
+  const isDashboardPage = pathname === "/dashboard";
+
   return (
     <><link rel="icon" href="/favicon.ico" sizes="any" /><html lang='en'>
       <body className={inter.className}>
@@ -28,16 +32,14 @@ export default function RootLayout({
           <Topbar />
 
           <main className='flex flex-row'>
-            <LeftSidebar />
+            {!isDashboardPage && <LeftSidebar />}
             <section className='main-container mt-4 mb-4'>
               <div className='w-full'>{children}</div>
             </section>
-            {/* @ts-ignore */}
           </main>
-          <Bottombar/>
+          {!isDashboardPage && <Bottombar/>}
         </SeiWalletProvider>
       </body>
     </html></>
-    
   );
 }
