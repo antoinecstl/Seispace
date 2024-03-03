@@ -1,7 +1,7 @@
 "use client"
+
 import Image from "next/image";
 import Link from "next/link";
-import { useMemo } from "react";
 import { WalletConnectButton, useWallet, } from '@sei-js/react';
 
 function Topbar() {
@@ -19,7 +19,7 @@ function Topbar() {
                     <Image className="hidden sm:inline" src='/X_logo_2023.svg' alt='logo' width={25} height={25}/>
                 </Link>
                 <Link href='https://discord.gg/seifi' className="hover:opacity-50 duration-300">
-                    <Image className="hidden sm:inline" src='/discord.svg' alt='logo' width={31} height={31}/>
+                    <Image className="hidden sm:inline" src='/discordsvg.svg' alt='logo' width={31} height={31}/>
                 </Link>
             </div>
             <div className="bg-primary-600 hover:bg-primary-500 duration-300 px-2 py-1 rounded-xl">
