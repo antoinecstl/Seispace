@@ -1,7 +1,7 @@
 import { supabase } from "@/app/api/supabase/supabaseClient";
 
 
-//AJOUTER UNE VERIFICATION DE L'USER POUR SECUR LE FAIT QUE LE BET EXISTE VRAIMENT (SI POSSIBLE MODIFIE LA LOGIQUE EN SE BASANT SUR LA BC)
+//AJOUTER UNE VERIFICATION DE L'USER POUR SECUR LE FAIT QUE LE BET EXISTE VRAIMENT et verif si bien coté serv (SI POSSIBLE MODIFIE LA LOGIQUE EN SE BASANT SUR LA BC)
 export async function handleUserBet(wallets_address: string, bet_amount: number) {
   // Vérifier si l'utilisateur existe déjà dans la table players_data
   let { data: existingPlayer, error: selectError } = await supabase

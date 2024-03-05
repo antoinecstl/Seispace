@@ -79,6 +79,13 @@ module.exports = {
           fontWeight: "600",
         },
       ],
+      "heading4-bold": [
+        "20px",
+        {
+          lineHeight: "140%",
+          fontWeight: "600",
+        },
+      ],
       "body-bold": [
         "18px",
         {
@@ -112,6 +119,13 @@ module.exports = {
         {
           lineHeight: "140%",
           fontWeight: "700",
+        },
+      ],
+      "sembody-medium": [
+        "17px",
+        {
+          lineHeight: "140%",
+          fontWeight: "500",
         },
       ],
       "base-regular": [

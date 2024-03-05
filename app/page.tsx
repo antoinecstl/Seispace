@@ -32,7 +32,7 @@ export default function Home() {
       handleUserBet(walletAccount?.address, betAmountNumber);
       setBetAmount(''); 
     } else {
-      // Gérer le cas où la valeur saisie n'est pas un nombre valide ou est négative
+      
       console.error('Invalid or negative bet amount');
       setBetAmount('')
     }
@@ -42,10 +42,11 @@ export default function Home() {
     <main className="flex flex-col items-center justify-center">
       <section className="text-center">
         
-        <div className="mt-8 mb-6 sm:mb-20 pt-8 items-center">
+        <div className="mt-8 mb-6 sm:mb-12 lg:mb-20 pt-8 items-center">
           <Wheel />
         </div>
-        <div className="flex justify-center">
+        <div className=''>
+        <div className="mx-auto flex justify-center sm:bg-slate-900/60 hover:sm:bg-slate-900 delay-50 duration-200 py-3 px-2 lg:w-[605px] rounded-xl mb-8">
           <div className='hidden sm:grid grid-cols-3 gap-4'>
             <button onClick={() => handleSetBetAmount('25')} className="transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-110 bg-primary-600 text-light-1 border border-primary-600 hover:border-white text-small-medium sm:text-body-semibold hover:bg-primary-500 duration-200 px-1 sm:p-2 rounded-lg">25 $SEI</button>
             <button onClick={() => handleSetBetAmount('10')} className="transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-110 bg-primary-600 text-light-1 border border-primary-600 hover:border-white text-small-medium sm:text-body-semibold hover:bg-primary-500 duration-200 sm:p-2 rounded-lg">10 $SEI</button>
@@ -57,9 +58,10 @@ export default function Home() {
             placeholder="$SEI Bet Amount"
             value={betAmount}
             onChange={(e) => handleSetBetAmount(e.target.value)}
-            min="0" // Ajoutez cet attribut pour empêcher la saisie de valeurs négatives directement dans le champ
+            min="0"
           />
           <button onClick={submitBet} className="transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-110 bg-primary-600 w-20 text-light-1 border border-primary-600 hover:border-white text-body-medium sm:text-body-semibold hover:bg-red-500 duration-200 sm:p-2 rounded-lg">BET</button>
+        </div>
         </div>
       </section>
     </main>

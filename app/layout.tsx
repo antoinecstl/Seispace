@@ -24,8 +24,8 @@ export default function RootLayout({
         <SeiWalletProvider
           chainConfiguration={{
             chainId: 'atlantic-2',
-            restUrl: 'http://localhost:3000/',
-            rpcUrl: 'http://localhost:3000/'
+            restUrl: 'https://sei-testnet-api.polkachu.com/',
+            rpcUrl: 'https://sei-testnet-rpc.polkachu.com/'
           }}
           wallets={['compass']}
           autoConnect='compass'>

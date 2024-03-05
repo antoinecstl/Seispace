@@ -28,17 +28,12 @@ export const bottombarLinks = [
     label: "Infinite",
   },
   {
-    imgURL: "/rocket.svg",
+    imgURL: "/whale.svg",
     route: "/big",
     label: "Whale",
   },
   {
-    imgURL: "/plane.svg",
-    route: "/medium",
-    label: "Fish",
-  },
-  {
-    imgURL: "/car.svg",
+    imgURL: "/shrimp.svg",
     route: "/small",
     label: "Shrimp",
   },
