@@ -128,6 +128,13 @@ module.exports = {
           fontWeight: "500",
         },
       ],
+      "base-bold": [
+        "16px",
+        {
+          lineHeight: "140%",
+          fontWeight: "700",
+        },
+      ],
       "base-regular": [
         "16px",
         {
@@ -168,6 +175,13 @@ module.exports = {
         {
           lineHeight: "140%",
           fontWeight: "500",
+        },
+      ],
+      "small-bold": [
+        "14px",
+        {
+          lineHeight: "140%",
+          fontWeight: "700",
         },
       ],
       "small-semibold": [

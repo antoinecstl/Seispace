@@ -2,11 +2,12 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { WalletConnectButton, useWallet, } from '@sei-js/react';
+import { WalletConnectButton} from '@sei-js/react';
 
 function Topbar() {
  
   return (
+
     <nav className='topbar mt-2'>
         <Link href='/' className='flex items-center gap-2 sm:gap-4'>
             <Image className="w-10 sm:w-12" src='/target.svg' alt='logo' width={40} height={40}/>

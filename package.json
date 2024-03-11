@@ -24,6 +24,7 @@
     "oauth-1.0a": "^2.2.6",
     "react": "^18.2.0",
     "react-confetti": "^6.1.0",
+    "react-confetti-explosion": "^2.1.2",
     "react-dom": "^18.2.0",
     "react-twitter-embed": "^4.0.4",
     "react-use": "^17.5.0",
