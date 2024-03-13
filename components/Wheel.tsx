@@ -4,6 +4,9 @@ import React, { useEffect, useState } from 'react';
 import { spinWheel } from '@/lib/action/Wheel.action';
 import RealtimeWheel from './realtime-wheel';
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { contract_address } from '@/app/page';
+
+import { timeKeeper } from "@/app/api/timer/time-keeper";
 
 
 const WheelOfFortune: React.FC = () => {
@@ -64,6 +67,7 @@ const WheelOfFortune: React.FC = () => {
             table: "game_start"
         }, (payload: GameStartPayload) => {
             const startTime = new Date(payload.new.start_time).getTime();
+            timeKeeper(startTime);
             setGameStartTime(startTime);
         }).subscribe();
   

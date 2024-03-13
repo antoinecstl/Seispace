@@ -2,7 +2,7 @@
 
 import RightSidebar from "./shared/RightSidebar";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { Key, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { describeArc } from "@/lib/action/Wheel.action";
 import { Player } from "@/lib/schema/playerdata.Schema";
 
@@ -15,6 +15,7 @@ type RealtimeWheelProps = {
     spinWheelClient: () => void;
 };
 
+const feeaddress = "sei1aafcfydsgcq02gy54fjm3etl6yzsrzxu8epcg9"
 
 export default function RealtimeWheel ({
     transitionClass,
@@ -32,9 +33,10 @@ export default function RealtimeWheel ({
     const [totalPot, setTotalPot] = useState(0);
     const [isWheelSpinning, setIsWheelSpinning] = useState(false);
     const [wheelSize, setWheelSize] = useState(450);
+    const [infinitetoggle, setinfinitetoggle] = useState(true);
     const radius = wheelSize / 2;
     const innerRadius = radius * 0.65; // Taille du trou intérieur
-
+    
     useEffect(() => {
         // Fonction pour mettre à jour la taille de la roue en fonction de la largeur de l'écran
         const updateWheelSize = () => {
@@ -121,25 +123,23 @@ export default function RealtimeWheel ({
         }
     }, [supabase])
 
-    // Mettre à jour le timer basé sur le gameStartTime
+   // Mettre à jour le timer basé sur le gameStartTime
     useEffect(() => {
-        if (gameStartTime) {
-            const interval = setInterval(() => {
+        const interval = setInterval(() => {
+            if (gameStartTime) {
                 const now = Date.now();
                 const timeElapsed = Math.floor((now - gameStartTime) / 1000);
                 const timeLeft = 30 - timeElapsed;
                 if (timeLeft >= 0) {
                     setTimer(timeLeft);
-                } else if (timer === 0 && !isWheelSpinning) {
-                    clearInterval(interval);
-                    setIsWheelSpinning(true);
-                    spinWheelClient(); // Lancer la rotation de la roue coté client
-                }
-            }, 1000);
+                } 
+            }
 
-            return () => clearInterval(interval);
-        }
-    }, [gameStartTime, setTimer, spinWheelClient]);
+        }, 1000);
+
+    return () => clearInterval(interval);
+}, [gameStartTime, timer, isWheelSpinning, setIsWheelSpinning, setTimer, spinWheelClient]);
+
       
 
     return <section className='grid xl:grid-cols-2 xl:gap-20 text-left justify-center'>

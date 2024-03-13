@@ -1,20 +1,26 @@
 "use client"
 
-import { useCallback, useEffect, useState, useMemo } from 'react';
-import { useCosmWasmClient, useSigningCosmWasmClient, useWallet, WalletConnectButton } from '@sei-js/react';
+import { calculateFee } from '@cosmjs/stargate';
+import { useEffect, useState, useMemo } from 'react';
+import {useSigningCosmWasmClient, useWallet} from '@sei-js/react';
 import Wheel from '@/components/Wheel';
 import Winner from '@/components/winner';
 import { handleUserBet } from '@/lib/action/UserJoin.action';
 
-const contract_address = "sei18j0wumtq8yewt7ka8403q7v7qfezhlsc53aq3hm7uvq8gj9xdnjs4rctnz";
+import { fetchTotalBet } from '@/lib/action/fetchbet';
+import { supabase } from './api/supabase/supabaseClient';
+
+export const contract_address = "sei18j0wumtq8yewt7ka8403q7v7qfezhlsc53aq3hm7uvq8gj9xdnjs4rctnz";
 
 export default function Home() {
   
   const [betAmount, setBetAmount] = useState('');
   const { connectedWallet, accounts } = useWallet();
   const walletAccount = useMemo(() => accounts?.[0], [accounts]);
-  const [isWinner, setIsWinner] = useState(false); // Assuming you want to show the winner conditionally
-  const [error, setError] = useState(''); // Add state for error messages
+  const [totalBet, setTotalBet] = useState<number>(0);
+  const [WinnerAdd, setWinnerAdd] = useState('');
+  const [isWinner, setIsWinner] = useState(false);
+  const [error, setError] = useState('');
 
   // For executing messages on cosmwasm smart contracts
   const { signingCosmWasmClient: signingClient } = useSigningCosmWasmClient();
@@ -54,13 +60,8 @@ export default function Home() {
     }
 
     try {
-      const msg = { add_bet_user_infinite: {} }; // Ajustez selon la méthode `execute` de votre contrat
-      // Fee devrait être un objet définissant les frais de transaction, pas juste un nombre
-      const fee = {
-        amount: [{ amount: "2000", denom: "usei" }], // Exemple de frais, ajustez selon vos besoins
-        gas: "200000", // Gas limit
-      };
-      // Les fonds que vous souhaitez lier à la transaction
+      const msg = { add_bet_user_infinite: {} };
+      const fee = calculateFee(300000, "0.1usei")
       const funds = [{ denom: 'usei', amount: String(betAmountNumber * 1000000) }]; // Ajustez la quantité selon vos besoins
     
       await signingClient?.execute(
@@ -72,26 +73,60 @@ export default function Home() {
         funds
       );
       handleUserBet(walletAccount?.address, betAmountNumber);
-      console.log('Bet submitted successfully');
       setError(''); // Clear any previous error
       setBetAmount('');
     } catch (error) {
-      console.error('Error submitting bet:', error);
-      setError('An error occurred while submitting your bet.');
+      setError(`Betting time is closed !`);
       setBetAmount('');
     }
   };
 
+  useEffect(() => {
+    const fetchAndSetTotalBet = async () => {
+      const fetchedTotalBet = await fetchTotalBet(); // Attendre que la promesse soit résolue
+      setTotalBet(fetchedTotalBet); // Stocker le résultat dans l'état
+    };
+    fetchAndSetTotalBet();
+  }, []);
+
+  interface GameWinnerPayload {
+    new: {
+      id: number;
+      winner_address: string;
+      timestamp: string;
+    };
+  }
+
+  useEffect(() => {
+    const channel = supabase.channel('game_winner').on('postgres_changes' as any, {
+            event: '*' as any,
+            schema: 'public',
+            table: "game_winner"
+    }, (payload : GameWinnerPayload) => {
+        setWinnerAdd(payload.new.winner_address);
+      }).subscribe();
+
+    return () => {supabase.removeChannel(channel)};
+  }, [supabase]);
+
+  useEffect(() => {
+    // Vérifier si le compte connecté est le gagnant à chaque changement de WinnerAdd ou walletAccount
+    if (WinnerAdd === walletAccount?.address) {
+      setIsWinner(true);
+    } else {
+      setIsWinner(false);
+    }
+  }, [WinnerAdd, walletAccount]);
+  
   if (isWinner) {
-    const winningAmount = 100; // Example
-    return <Winner amount={winningAmount} onBack={() => setIsWinner(false)} />;
+    return <Winner amount={totalBet} onBack={() => setIsWinner(false)} />;
   }
 
   return (
     <main className="flex flex-col items-center justify-center">
       <section className="text-center">
         <div className="mt-8 mb-6 sm:mb-12 lg:mb-20 pt-8 items-center">
-          <Wheel />
+          <Wheel/>
         </div>
         <div>
         {error && <p className='mb-4' style={{ color: 'red', textAlign: 'center' }}>{error}</p>}
