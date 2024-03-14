@@ -6,11 +6,10 @@ import {useSigningCosmWasmClient, useWallet} from '@sei-js/react';
 import Wheel from '@/components/Wheel';
 import Winner from '@/components/winner';
 import { handleUserBet } from '@/lib/action/UserJoin.action';
-
 import { fetchTotalBet } from '@/lib/action/fetchbet';
 import { supabase } from './api/supabase/supabaseClient';
 
-export const contract_address = "sei18j0wumtq8yewt7ka8403q7v7qfezhlsc53aq3hm7uvq8gj9xdnjs4rctnz";
+const contract_address = "sei18j0wumtq8yewt7ka8403q7v7qfezhlsc53aq3hm7uvq8gj9xdnjs4rctnz";
 
 export default function Home() {
   
@@ -81,14 +80,6 @@ export default function Home() {
     }
   };
 
-  useEffect(() => {
-    const fetchAndSetTotalBet = async () => {
-      const fetchedTotalBet = await fetchTotalBet(); // Attendre que la promesse soit résolue
-      setTotalBet(fetchedTotalBet); // Stocker le résultat dans l'état
-    };
-    fetchAndSetTotalBet();
-  }, []);
-
   interface GameWinnerPayload {
     new: {
       id: number;
@@ -102,8 +93,10 @@ export default function Home() {
             event: '*' as any,
             schema: 'public',
             table: "game_winner"
-    }, (payload : GameWinnerPayload) => {
+    }, async (payload : GameWinnerPayload) => {
         setWinnerAdd(payload.new.winner_address);
+        const fetchedTotalBet = await fetchTotalBet(); // Attendre que la promesse soit résolue
+        setTotalBet(fetchedTotalBet);
       }).subscribe();
 
     return () => {supabase.removeChannel(channel)};
