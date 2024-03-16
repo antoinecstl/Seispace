@@ -1,4 +1,3 @@
-"use server"
 import { GameInfiniteserver } from "../cosmoperation/toggleGameInfiniteserver";
 import { supabase } from "../supabase/supabaseClient";
 
