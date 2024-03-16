@@ -5,7 +5,7 @@ import { supabase } from '../supabase/supabaseClient';
 
 const rpcEndpoint = "https://rpc.atlantic-2.seinetwork.io/";
 const feeaddress = "sei1aafcfydsgcq02gy54fjm3etl6yzsrzxu8epcg9";
-const mnemonic = process.env.MNEMONIC!;
+const mnemonic = "pear shoe relief wage dish rifle guitar coil wear celery dinner velvet";
 
 // Définir la variable au niveau du module pour stocker la valeur du second receiver
 let WinnerAdd = '';
