@@ -1,15 +1,15 @@
 
-export async function calculateFinalAngle (finalAngle: number) {
-  const randomAngle = Math.floor(Math.random() * 10 * 360 * 10);
-  const calcAngle = finalAngle + randomAngle
-  console.log("Angle Server :", calcAngle)
-  return calcAngle ;
+
+
+export async function calculateFinalAngle (winnerStartAngle: number, winnerEndAngle: number) {
+  // Choisissez un point aléatoire dans l'intervalle [winnerStartAngle, winnerEndAngle]
+  const finalAngle = winnerStartAngle + (Math.random() * (winnerEndAngle - winnerStartAngle));
+  return finalAngle;
 };
 
 
-
-export const spinWheel = async (finalAngle: number) => {
-  const final = await calculateFinalAngle(finalAngle)
+export const spinWheel =  (winnerStartAngle: number, winnerEndAngle: number) => {
+  const final = calculateFinalAngle(winnerStartAngle, winnerEndAngle)
   return final
 }
 

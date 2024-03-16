@@ -3,39 +3,34 @@
 import RightSidebar from "./shared/RightSidebar";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useEffect, useState } from "react";
-import { describeArc } from "@/lib/action/Wheel.action";
-import { Player } from "@/lib/schema/playerdata.Schema";
+import { describeArc, spinWheel } from "@/lib/action/Wheel.action";
+import { Player, WinnerInfo } from "@/lib/schema/playerdata.Schema";
 
 type RealtimeWheelProps = {
-    transitionClass: string;
-    finalAngle: number;
     timer: number;
     gameStartTime: number | null;
     setTimer: React.Dispatch<React.SetStateAction<number>>;
-    spinWheelClient: () => void;
 };
 
-const feeaddress = "sei1aafcfydsgcq02gy54fjm3etl6yzsrzxu8epcg9"
-
 export default function RealtimeWheel ({
-    transitionClass,
-    finalAngle,
     timer,
     gameStartTime,
     setTimer,
-    spinWheelClient
 }: RealtimeWheelProps) {
 
     const supabase = createClientComponentClient()
     const [lastBet, setLastBet] = useState<{ address: string; amount: number; color: string } | null>(null);
     const [players, setPlayers] = useState<Player[]>([]);
+    const [WinnerInfo, setWinnerInfo] = useState<WinnerInfo[]>([]);
     const [playersCount, setPlayersCount] = useState(0);
     const [totalPot, setTotalPot] = useState(0);
-    const [isWheelSpinning, setIsWheelSpinning] = useState(false);
+    const [IsSpinning, setIsSpinning] = useState(false);
     const [wheelSize, setWheelSize] = useState(450);
-    const [infinitetoggle, setinfinitetoggle] = useState(true);
+    const [finalAngle, setFinalAngle] = useState(0);
+    const [transitionClass, setTransitionClass] = useState('');
+
     const radius = wheelSize / 2;
-    const innerRadius = radius * 0.65; // Taille du trou intérieur
+    const innerRadius = radius * 0.65;
     
     useEffect(() => {
         // Fonction pour mettre à jour la taille de la roue en fonction de la largeur de l'écran
@@ -65,31 +60,34 @@ export default function RealtimeWheel ({
 
   // Fonction pour récupérer les joueurs depuis Supabase
   const fetchPlayers = async () => {
-    const { data, error } = await supabase
-      .from('players_data')
-      .select('*');
-
+    const { data, error } = await supabase.from('players_data').select('*');
+  
     if (error) {
       console.error('Error during data recovery', error);
       return;
     }
-
+  
     if (data) {
-      setPlayers(data);
-      const pot = data.reduce((acc, player) => acc + player.bet_amount, 0);
-      setTotalPot(pot);
-      setPlayersCount(data.length)
+        setPlayers(data);
+        const pot = data.reduce((acc, player) => acc + player.bet_amount, 0);
+        setTotalPot(pot);
+        setPlayersCount(data.length)
+        return(data)
     }
   };
+  
 
   const missingPlayers = Math.max(0, 2 - playersCount); // Calculez le nombre de joueurs manquants
   
   let startAngle = 0;
   const paths = players.map(player => {
+    player.startAngle = startAngle;
     const playerShare = player.bet_amount / totalPot;
     const endAngle = startAngle + (playerShare * 360);
+    player.endAngle = endAngle
     const path = describeArc(radius, radius, radius, innerRadius, startAngle, endAngle);
     startAngle = endAngle; // Mettez à jour startAngle pour le prochain segment
+
     return (
       <path d={path} fill={player.color} />
     );
@@ -107,11 +105,10 @@ export default function RealtimeWheel ({
 
             // Traiter le payload pour les mises à jour et les insertions
             if (payload.eventType === 'INSERT' || payload.eventType === 'UPDATE') {
-                console.log(payload)
                 const newBetInfo = {
                     address: payload.new.wallets_address,
                     amount: payload.new.bet_amount,
-                    color: payload.new.color
+                    color: payload.new.color,
                 };
                 setLastBet(newBetInfo); // Mettre à jour l'état avec les informations du dernier pari
             }
@@ -123,28 +120,115 @@ export default function RealtimeWheel ({
         }
     }, [supabase])
 
-   // Mettre à jour le timer basé sur le gameStartTime
-    useEffect(() => {
-        const interval = setInterval(() => {
-            if (gameStartTime) {
-                const now = Date.now();
-                const timeElapsed = Math.floor((now - gameStartTime) / 1000);
-                const timeLeft = 30 - timeElapsed;
-                if (timeLeft >= 0) {
-                    setTimer(timeLeft);
-                } 
-            }
+    // Fonction pour démarrer la rotation de la roue
+    const spinWheelClient = (final: number) => {
+        setIsSpinning(true);
 
-        }, 1000);
+        let currentAngle = 0;
+        const finalRotationAngle = final + 360 * 10; 
+        const duration = 8000;
+        const startTime = Date.now();
+        const easeInOutCubic = (t : number) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
+        const animate = () => {
+            const now = Date.now();
+            const elapsedTime = now - startTime;
+            const progress = elapsedTime / duration;
+
+            if (progress < 1) {
+                currentAngle = finalRotationAngle * easeInOutCubic(progress);
+                setFinalAngle(currentAngle);
+                requestAnimationFrame(animate);
+              } else {
+                setTransitionClass('');
+                setFinalAngle(final);
+        
+                setTimeout(() => {
+                    setTransitionClass('transition-transform duration-8000');
+                    setIsSpinning(false);
+                  }, 50);
+                }
+            };
+
+            requestAnimationFrame(animate);
+    };
+    
+    const resetGame = () => {
+        setLastBet(null); // Réinitialise le dernier pari
+        setIsSpinning(false); // Assure que la roue n'est plus en train de tourner
+        setFinalAngle(0); // Réinitialise l'angle de la roue à 0
+        setTransitionClass(''); // Réinitialise la classe de transition
+        setTimer(30);
+    };
+
+
+    const fetchWinner = async () => {
+        const { data, error } = await supabase.from('game_winner').select('winner_address').order('id', { ascending: false }).limit(1);      
+        
+        if (error) {
+          console.error('Error fetching winner address:', error);
+          return;
+        }
+      
+        if (data && data.length > 0) {
+            setWinnerInfo(data); // Assurez-vous que ceci met à jour l'état correctement
+            return data[0]; // Retourne le premier élément pour un traitement ultérieur
+        }
+        return null; // Retourne null si aucune donnée n'est trouvée
+    };
+    
+
+    
+   // Mettre à jour le timer basé sur le gameStartTime
+   useEffect(() => {
+    if (gameStartTime) {
+        const interval = setInterval(async () => {
+            const now = Date.now();
+            const timeElapsed = Math.floor((now - gameStartTime) / 1000);
+            const timeLeft = 30 - timeElapsed;
+
+                if (timeLeft > 0) {
+                setTimer(timeLeft);
+            } else {
+                    clearInterval(interval); // Important de nettoyer l'intervalle ici
+                    setTimer(0);
+                    setTimeout(async () => {
+                        const winnerData = await fetchWinner();
+                        if (winnerData) {
+                            console.log("Spin : ", winnerData.winner_address);
+                            const players = await fetchPlayers(); // Assurez-vous que ceci est aussi await si nécessaire
+                            if (players) {   
+                                let startAngle = 0;
+                                players.map(player => {
+                                  player.startAngle = startAngle;
+                                  const playerShare = player.bet_amount / totalPot;
+                                  const endAngle = startAngle + (playerShare * 360);
+                                  player.endAngle = endAngle
+                                  startAngle = endAngle;})
+                                const winnerbdd = players.find(player => player.wallets_address == winnerData.winner_address);
+                                console.log("WinnerBDD: ", winnerbdd);
+                                console.log("Angle:", winnerbdd.startAngle, winnerbdd.endAngle);
+                                const final = spinWheel(winnerbdd.startAngle, winnerbdd.endAngle);
+                                console.log("final :", final);
+                                spinWheelClient(await final);
+                                setTimeout(() => {
+                                    resetGame();
+                                }, 11000);
+                        }
+            }}, 5000);
+                
+            }
+        }, 1000); 
 
     return () => clearInterval(interval);
-}, [gameStartTime, timer, isWheelSpinning, setIsWheelSpinning, setTimer, spinWheelClient]);
-
-      
+    }
+}, [gameStartTime]);
 
     return <section className='grid xl:grid-cols-2 xl:gap-20 text-left justify-center'>
             <div className='relative mx-auto'>
-                <svg width={wheelSize} height={wheelSize}
+                <svg 
+                    width={wheelSize} 
+                    height={wheelSize}
                     viewBox={`0 0 ${wheelSize} ${wheelSize}`}
                     style={{ transform: `rotate(${finalAngle}deg)` }}
                     className={transitionClass}>

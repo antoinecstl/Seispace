@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect, useState } from 'react';
-import Image from 'next/image';
 import { TwitterShareButton } from 'react-twitter-embed';
 import Confetti from 'react-confetti';
 

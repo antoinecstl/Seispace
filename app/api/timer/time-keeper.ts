@@ -7,7 +7,7 @@ export async function timeKeeper(startTime: number) {
     console.log(`Game start time is: ${startTime}`);
 
     // Calculer le délai en millisecondes jusqu'au moment où vous souhaitez exécuter `GameInfiniteserver`
-    const delayMs = 29 * 1000; // 29 secondes pour cet exemple
+    const delayMs = 28 * 1000; 
 
     // Utiliser setTimeout pour attendre le délai avant d'exécuter `GameInfiniteserver`
     setTimeout(async () => {

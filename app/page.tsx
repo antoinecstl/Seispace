@@ -137,7 +137,7 @@ export default function Home() {
               onChange={(e) => handleSetBetAmount(e.target.value)}
               min="0"
             />
-            <button onClick={submitBet} className="transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-110 bg-primary-600 w-20 text-light-1 border border-primary-600 hover:border-white text-body-medium sm:text-body-semibold hover:bg-red-500 duration-200 sm:p-2 rounded-lg">BET</button>
+            <button onClick={submitBet} className="transition ease-in-out delay-50 hover:-translate-y-1 hover:scale-110 bg-primary-600 w-20 text-light-1 border border-primary-600 hover:border-white text-body-medium sm:text-body-semibold hover:bg-green+-500 duration-200 sm:p-2 rounded-lg">BET</button>
           </div>
         </div>
       </section>
