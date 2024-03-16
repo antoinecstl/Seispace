@@ -23,7 +23,6 @@ function generateRandomNumber(length : number) {
 }
 
 export async function GameInfiniteserver(contractAddress: string) {
-  console.log(`Mnemonic: '${mnemonic}'`);
   const wallet = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic, { prefix: "sei" });
   const client = await getSigningCosmWasmClient(rpcEndpoint, wallet);
 

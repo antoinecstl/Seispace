@@ -203,9 +203,12 @@ export default function RealtimeWheel ({
                                   player.startAngle = startAngle;
                                   const playerShare = player.bet_amount / totalPot;
                                   const endAngle = startAngle + (playerShare * 360);
-                                  player.endAngle = endAngle
-                                  startAngle = endAngle;})
-                                const winnerbdd = players.find(player => player.wallets_address == winnerData.winner_address);
+                                  player.endAngle = endAngle;
+                                  startAngle = endAngle;
+                                  return {startAngle, endAngle}
+                                })
+                                console.log("players : ", players);
+                                const winnerbdd = players.find(player => player.wallets_address === winnerData.winner_address);
                                 console.log("WinnerBDD: ", winnerbdd);
                                 console.log("Angle:", winnerbdd.startAngle, winnerbdd.endAngle);
                                 const final = spinWheel(winnerbdd.startAngle, winnerbdd.endAngle);
