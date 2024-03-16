@@ -24,7 +24,6 @@ export default function RealtimeWheel ({
     const [WinnerInfo, setWinnerInfo] = useState<WinnerInfo[]>([]);
     const [playersCount, setPlayersCount] = useState(0);
     const [totalPot, setTotalPot] = useState(0);
-    const [winnerbdd, setwinnerbdd] = useState<Player[]>([]);
     const [IsSpinning, setIsSpinning] = useState(false);
     const [wheelSize, setWheelSize] = useState(450);
     const [finalAngle, setFinalAngle] = useState(0);
@@ -206,18 +205,19 @@ export default function RealtimeWheel ({
                                   const endAngle = startAngle + (playerShare * 360);
                                   player.endAngle = endAngle;
                                   startAngle = endAngle;
-                                  return {startAngle, endAngle}
                                 })
-                                console.log("players : ", players);
-                                setwinnerbdd(players.find(player => player.wallets_address === winnerData.winner_address));
-                                console.log("WinnerBDD: ", winnerbdd[0]);
-                                console.log("Angle:", winnerbdd[0].startAngle, winnerbdd[0].endAngle);
-                                const final = spinWheel(winnerbdd[0].startAngle, winnerbdd[0].endAngle);
-                                console.log("final :", final);
-                                spinWheelClient(await final);
-                                setTimeout(() => {
-                                    resetGame();
-                                }, 11000);
+                                console.log("players : ", players)
+                                const winnerbdd = players.find(player => player.wallets_address === winnerData.winner_address);
+                                if (winnerbdd) {
+                                    console.log("WinnerBDD: ", winnerbdd);
+                                    console.log("Angle:", winnerbdd.startAngle, winnerbdd.endAngle);
+                                    const final = spinWheel(winnerbdd.startAngle, winnerbdd.endAngle);
+                                    console.log("final :", final);
+                                    spinWheelClient(await final);
+                                    setTimeout(() => {
+                                        resetGame();
+                                    }, 11000);                               
+                                }
                         }
             }}, 5000);
                 
