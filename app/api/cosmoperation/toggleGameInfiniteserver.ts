@@ -1,4 +1,3 @@
-"use server"
 import { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing';
 import { getSigningCosmWasmClient } from "@sei-js/core";
 import { calculateFee } from '@cosmjs/stargate';
