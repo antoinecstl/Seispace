@@ -179,54 +179,53 @@ export default function RealtimeWheel ({
     
 
     
-   // Mettre à jour le timer basé sur le gameStartTime
-   useEffect(() => {
+// Mettre à jour le timer basé sur le gameStartTime
+useEffect(() => {
     if (gameStartTime) {
         const interval = setInterval(async () => {
             const now = Date.now();
             const timeElapsed = Math.floor((now - gameStartTime) / 1000);
             const timeLeft = 30 - timeElapsed;
 
-                if (timeLeft > 0) {
+            if (timeLeft > 0) {
                 setTimer(timeLeft);
             } else {
-                    clearInterval(interval); // Important de nettoyer l'intervalle ici
-                    setTimer(0);
-                    setTimeout(async () => {
-                        const winnerData = await fetchWinner();
-                        if (winnerData) {
-                            console.log("Spin : ", winnerData.winner_address);
-                            const players = await fetchPlayers(); // Assurez-vous que ceci est aussi await si nécessaire
-                            if (players) {   
-                                let startAngle = 0;
-                                players.map(player => {
-                                  player.startAngle = startAngle;
-                                  const playerShare = player.bet_amount / totalPot;
-                                  const endAngle = startAngle + (playerShare * 360);
-                                  player.endAngle = endAngle;
-                                  startAngle = endAngle;
-                                })
-                                console.log("players : ", players)
-                                const winnerbdd = players.find(player => player.wallets_address === winnerData.winner_address);
-                                if (winnerbdd) {
-                                    console.log("WinnerBDD: ", winnerbdd);
-                                    console.log("Angle:", winnerbdd.startAngle, winnerbdd.endAngle);
-                                    const final = spinWheel(winnerbdd.startAngle, winnerbdd.endAngle);
-                                    console.log("final :", final);
-                                    spinWheelClient(await final);
-                                    setTimeout(() => {
-                                        resetGame();
-                                    }, 11000);                               
-                                }
-                        }
-            }}, 5000);
-                
-            }
-        }, 1000); 
+                clearInterval(interval); // Nettoyer l'intervalle ici
+                setTimer(0);
 
-    return () => clearInterval(interval);
+                console.log(players)
+                // Attendre un peu avant de procéder
+                setTimeout(async () => {
+                    const winnerData = await fetchWinner();
+                    if (!winnerData) {
+                        console.error("No winner data found");
+                        return;
+                    }
+                    console.log("Winner Data:", winnerData.winner_address);
+
+                    for (const i in players){
+                        if (players[i].wallets_address == winnerData.winner_address) {
+                            const winnerPlayer = players[i];
+                            const startAngle = winnerPlayer.startAngle;
+                            const endAngle = winnerPlayer.endAngle;
+
+                            console.log("Winner Player:", winnerPlayer);
+                            console.log("Winner Angle : ", startAngle, endAngle);
+                            const finalAngle = spinWheel(startAngle, endAngle);
+                            spinWheelClient(await finalAngle);
+                            setTimeout(() => resetGame(), 11000);
+                        };
+                    };
+
+                    
+                }, 5000);
+            }
+        }, 1000);
+
+        return () => clearInterval(interval);
     }
-}, [gameStartTime]);
+}, [gameStartTime, players]);
+
 
     return <section className='grid xl:grid-cols-2 xl:gap-20 text-left justify-center'>
             <div className='relative mx-auto'>

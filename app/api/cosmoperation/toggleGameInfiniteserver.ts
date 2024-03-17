@@ -78,5 +78,3 @@ export async function GameInfiniteserver(contractAddress: string) {
   }
 
 }
-
-export { WinnerAdd };

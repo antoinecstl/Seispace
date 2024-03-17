@@ -14,7 +14,6 @@ export async function timeKeeper(startTime: number) {
     setTimeout(async () => {
         await GameInfiniteserver("sei18j0wumtq8yewt7ka8403q7v7qfezhlsc53aq3hm7uvq8gj9xdnjs4rctnz");
         
-        // Ajoutez un autre setTimeout ici pour attendre 5 secondes supplémentaires avant de vider la table
         setTimeout(async () => {
             try {
                 const { data, error } = await supabase
@@ -28,6 +27,6 @@ export async function timeKeeper(startTime: number) {
                 console.error('Error deleting rows:', error);
               }
               
-        }, 10000); // Attendre 5 secondes avant de vider la table
+        }, 10000); // Attendre 10 secondes avant de vider la table
     }, delayMs);
 }
