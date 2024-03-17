@@ -12,8 +12,11 @@ export async function timeKeeper(startTime: number) {
 
     // Utiliser setTimeout pour attendre le délai avant d'exécuter `GameInfiniteserver`
     setTimeout(async () => {
+        try{
         await GameInfiniteserver("sei18j0wumtq8yewt7ka8403q7v7qfezhlsc53aq3hm7uvq8gj9xdnjs4rctnz");
-        
+        } catch (error) {
+            console.error("error on executing the sc : ", error)
+        }
         setTimeout(async () => {
             try {
                 const { data, error } = await supabase

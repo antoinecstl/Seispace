@@ -1,3 +1,4 @@
+
 export async function calculateFinalAngle (winnerStartAngle: number, winnerEndAngle: number) {
   // Choisissez un point aléatoire dans l'intervalle [winnerStartAngle, winnerEndAngle]
   const finalAngle = winnerStartAngle + (Math.random() * (winnerEndAngle - winnerStartAngle));
