@@ -27,8 +27,14 @@ const WheelOfFortune: React.FC = () => {
             table: "game_start"
         }, (payload: GameStartPayload) => {
             const startTime = new Date(payload.new.start_time).getTime();
-            timeKeeper(startTime);
-            setGameStartTime(startTime);
+            try {
+              timeKeeper(startTime);
+              setGameStartTime(startTime);
+            } catch (error)
+            {
+              console.error("error on executing the sc : ", error)
+          }
+            
         }).subscribe();
   
     return () => {
