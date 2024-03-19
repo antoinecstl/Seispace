@@ -1,7 +1,7 @@
 "use server"
 
-import { GameInfiniteserver } from "../cosmoperation/toggleGameInfiniteserver";
-import { supabase } from "../supabase/supabaseClient";
+import { GameInfiniteserver } from "./cosmoperation/toggleGameInfiniteserver";
+import { supabase } from "@/app/api/supabase/supabaseClient";
 
 
 export async function timeKeeper(startTime: number) {

@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import RealtimeWheel from './realtime-wheel';
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { timeKeeper } from "@/app/api/timer/time-keeper";
+import { timeKeeper } from '@/lib/action/time-keeper';
 
 
 const WheelOfFortune: React.FC = () => {

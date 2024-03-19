@@ -3,7 +3,7 @@
 import { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing';
 import { getSigningCosmWasmClient } from "@sei-js/core";
 import { calculateFee } from '@cosmjs/stargate';
-import { supabase } from '../supabase/supabaseClient';
+import { supabase } from '../../../app/api/supabase/supabaseClient';
 
 const rpcEndpoint = "https://rpc.atlantic-2.seinetwork.io/";
 const feeaddress = "sei1aafcfydsgcq02gy54fjm3etl6yzsrzxu8epcg9";
