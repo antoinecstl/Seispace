@@ -77,7 +77,7 @@ export default function Home() {
       setError(''); // Clear any previous error
       setBetAmount('');
     } catch (error) {
-      setError(`Betting time is closed !`);
+      setError(`Error while trying to bet`);
       setBetAmount('');
     }
   };
@@ -89,7 +89,6 @@ export default function Home() {
       timestamp: string;
     };
   }
-//// A FOUTRE EN CLIENT COMPONENT
 
   useEffect(() => {
     const channel = supabase.channel('game_winner').on('postgres_changes' as any, {
@@ -115,7 +114,9 @@ export default function Home() {
   }, [WinnerAdd, walletAccount]);
   
   if (isWinner) {
-    return <Winner amount={totalBet} onBack={() => setIsWinner(false)} />;
+    setTimeout(() => {
+      return <Winner amount={totalBet} onBack={() => setIsWinner(false)} />;
+    }, 8000)
   }
 
   return (

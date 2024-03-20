@@ -77,7 +77,7 @@ export default function RealtimeWheel ({
   };
   
 
-  const missingPlayers = Math.max(0, 2 - playersCount); // Calculez le nombre de joueurs manquants
+  const missingPlayers = Math.max(0, 2 - playersCount);
   
   let startAngle = 0;
   const paths = players.map(player => {
