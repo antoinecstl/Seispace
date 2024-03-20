@@ -14,13 +14,45 @@ export async function timeKeeper(startTime: number) {
   const delayMs = 28 * 1000;
 
   await sleep(delayMs);
-  try {
-    await GameInfiniteserver(
-      "sei18j0wumtq8yewt7ka8403q7v7qfezhlsc53aq3hm7uvq8gj9xdnjs4rctnz"
-    );
-  } catch (error) {
-    console.error("error on executing the sc : ", error);
-  }
+  // Vérifier le verrou avant l'exécution
+    const { data: lockData, error: lockError } = await supabase
+    .from('game_lock')
+    .select('*')
+    .single();
+
+    if (lockError) {
+    console.error('Error checking lock:', lockError);
+    return;
+    }
+
+    if (lockData && lockData.is_locked) {
+    console.log('Game is already in progress.');
+    return;
+    }
+
+    // Verrouiller le jeu
+    const { error: lockUpdateError } = await supabase
+    .from('game_lock')
+    .update({ is_locked: true })
+    .match({ id: lockData.id });
+
+    if (lockUpdateError) {
+    console.error('Error locking the game:', lockUpdateError);
+    return;
+    }
+
+    try {
+    // Exécuter GameInfiniteserver
+    await GameInfiniteserver("sei18j0wumtq8yewt7ka8403q7v7qfezhlsc53aq3hm7uvq8gj9xdnjs4rctnz");
+    } catch (error) {
+    console.error("Error on executing the sc:", error);
+    } finally {
+    // Libérer le verrou après l'exécution
+    await supabase
+    .from('game_lock')
+    .update({ is_locked: false })
+    .match({ id: lockData.id });
+    };
 
   await sleep(10000);
   try {
@@ -33,5 +65,5 @@ export async function timeKeeper(startTime: number) {
     console.log("All rows deleted successfully:", data);
   } catch (error) {
     console.error("Error deleting rows:", error);
-  }
-}
+  };
+};
