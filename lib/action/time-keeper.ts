@@ -9,7 +9,6 @@ async function sleep(ms: number) {
 
 export async function timeKeeper(startTime: number) {
 
-
   console.log(`Game start time is: ${startTime}`);
 
   const delayMs = 28 * 1000;

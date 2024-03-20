@@ -9,6 +9,7 @@ import { handleUserBet } from '@/lib/action/UserJoin.action';
 import { fetchTotalBet } from '@/lib/action/fetchbet';
 import { supabase } from './api/supabase/supabaseClient';
 
+export const maxDuration = 40;
 
 const contract_address = "sei18j0wumtq8yewt7ka8403q7v7qfezhlsc53aq3hm7uvq8gj9xdnjs4rctnz";
 
