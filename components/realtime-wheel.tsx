@@ -193,7 +193,6 @@ useEffect(() => {
                 clearInterval(interval); // Nettoyer l'intervalle ici
                 setTimer(0);
 
-                console.log(players)
                 // Attendre un peu avant de procéder
                 setTimeout(async () => {
                     const winnerData = await fetchWinner();
@@ -218,7 +217,7 @@ useEffect(() => {
                     };
 
                     
-                }, 5000);
+                }, 6000);
             }
         }, 1000);
 

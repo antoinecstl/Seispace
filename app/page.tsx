@@ -97,6 +97,11 @@ export default function Home() {
             table: "game_winner"
     }, async (payload : GameWinnerPayload) => {
         setWinnerAdd(payload.new.winner_address);
+        if (WinnerAdd === walletAccount?.address) {
+          setIsWinner(true);
+        } else {
+          setIsWinner(false);
+        }
         const fetchedTotalBet = await fetchTotalBet(); // Attendre que la promesse soit résolue
         setTotalBet(fetchedTotalBet);
       }).subscribe();
@@ -104,19 +109,10 @@ export default function Home() {
     return () => {supabase.removeChannel(channel)};
   }, [supabase]);
 
-  useEffect(() => {
-    // Vérifier si le compte connecté est le gagnant à chaque changement de WinnerAdd ou walletAccount
-    if (WinnerAdd === walletAccount?.address) {
-      setIsWinner(true);
-    } else {
-      setIsWinner(false);
-    }
-  }, [WinnerAdd, walletAccount]);
-  
   if (isWinner) {
     setTimeout(() => {
       return <Winner amount={totalBet} onBack={() => setIsWinner(false)} />;
-    }, 8000)
+    }, 10000)
   }
 
   return (
