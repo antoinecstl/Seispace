@@ -3,11 +3,15 @@
 import { GameInfiniteserver } from "./cosmoperation/toggleGameInfiniteserver";
 import { supabase } from "@/app/api/supabase/supabaseClient";
 
+export const maxDuration = 40;
+
 async function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 export async function timeKeeper(startTime: number) {
+
+
   console.log(`Game start time is: ${startTime}`);
 
   const delayMs = 28 * 1000;
