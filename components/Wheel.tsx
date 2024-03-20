@@ -7,7 +7,7 @@ import { timeKeeper } from '@/lib/action/time-keeper';
 
 
 const WheelOfFortune: React.FC = () => {
-  const [timer, setTimer] = useState(30); // Ce timer sera mis à jour par RealtimeWheel
+  const [timer, setTimer] = useState(30);
   const [gameStartTime, setGameStartTime] = useState<number | null>(null);
   const supabase = createClientComponentClient();
     
@@ -18,9 +18,7 @@ const WheelOfFortune: React.FC = () => {
       };
     }
     
-  
-  // Souscrire à la table game_start pour obtenir le start_time
-  useEffect(() => {
+    useEffect(() => {
     const channel = supabase.channel('game_time').on('postgres_changes' as any, {
             event: '*' as any,
             schema: 'public',
@@ -46,8 +44,8 @@ const WheelOfFortune: React.FC = () => {
   return (
     <RealtimeWheel 
         timer={timer}
-        gameStartTime={gameStartTime} // Passer gameStartTime comme prop
-        setTimer={setTimer} // Passer setTimer pour permettre à RealtimeWheel de le mettre à jour
+        gameStartTime={gameStartTime}
+        setTimer={setTimer}
     />
 );
 };
