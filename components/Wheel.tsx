@@ -5,6 +5,7 @@ import RealtimeWheel from './realtime-wheel';
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { timeKeeper } from '@/lib/action/time-keeper';
 
+export const maxDuration = 40;
 
 const WheelOfFortune: React.FC = () => {
   const [timer, setTimer] = useState(30);

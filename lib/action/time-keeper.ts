@@ -3,8 +3,6 @@
 import { GameInfiniteserver } from "./cosmoperation/toggleGameInfiniteserver";
 import { supabase } from "@/app/api/supabase/supabaseClient";
 
-export const maxDuration = 40;
-
 async function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
