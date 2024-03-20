@@ -16,7 +16,7 @@ export async function timeKeeper(startTime: number) {
   try {
     await GameInfiniteserver(
       "sei18j0wumtq8yewt7ka8403q7v7qfezhlsc53aq3hm7uvq8gj9xdnjs4rctnz"
-    ); //OTHER SERVER FUNCTION
+    );
   } catch (error) {
     console.error("error on executing the sc : ", error);
   }
