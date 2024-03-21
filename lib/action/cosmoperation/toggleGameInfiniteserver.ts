@@ -43,6 +43,7 @@ export async function GameInfiniteserver(contractAddress: string) {
 
   try {
     const winner = await client?.execute(feeaddress, contractAddress, executeendMsg, fee); 
+    console.log("Transaction réussie:", winner.transactionHash);
 
     let receiverCounter = 0;
   
@@ -52,7 +53,7 @@ export async function GameInfiniteserver(contractAddress: string) {
           if (attr.key === 'receiver') {
             receiverCounter++;
             if (receiverCounter === 2) {
-              WinnerAdd = attr.value; // Stocke la valeur du second receiver
+              WinnerAdd = attr.value;
               console.log(`Winner: ${WinnerAdd}`);
             }
           }

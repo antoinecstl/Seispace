@@ -4,7 +4,7 @@ import RightSidebar from "./shared/RightSidebar";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useEffect, useState } from "react";
 import { describeArc, spinWheel } from "@/lib/action/Wheel.action";
-import { Player, WinnerInfo } from "@/lib/schema/playerdata.Schema";
+import { Player, WinnerInfo, players_data } from "@/lib/schema/playerdata.Schema";
 
 type RealtimeWheelProps = {
     timer: number;
@@ -21,6 +21,7 @@ export default function RealtimeWheel ({
     const supabase = createClientComponentClient()
     const [lastBet, setLastBet] = useState<{ address: string; amount: number; color: string } | null>(null);
     const [players, setPlayers] = useState<Player[]>([]);
+    const [playerdata, setplayerdata] = useState<players_data[]>([]);
     const [WinnerInfo, setWinnerInfo] = useState<WinnerInfo[]>([]);
     const [playersCount, setPlayersCount] = useState(0);
     const [totalPot, setTotalPot] = useState(0);
@@ -120,6 +121,8 @@ export default function RealtimeWheel ({
         }
     }, [supabase])
 
+    
+
     // Fonction pour démarrer la rotation de la roue
     const spinWheelClient = (final: number) => {
         setIsSpinning(true);
@@ -176,54 +179,83 @@ export default function RealtimeWheel ({
         }
         return null; // Retourne null si aucune donnée n'est trouvée
     };
-    
 
-    
-// Mettre à jour le timer basé sur le gameStartTime
-useEffect(() => {
-    if (gameStartTime) {
-        const interval = setInterval(async () => {
-            const now = Date.now();
-            const timeElapsed = Math.floor((now - gameStartTime) / 1000);
-            const timeLeft = 30 - timeElapsed;
-
-            if (timeLeft > 0) {
-                setTimer(timeLeft);
-            } else {
-                clearInterval(interval); // Nettoyer l'intervalle ici
-                setTimer(0);
-
-                // Attendre un peu avant de procéder
-                setTimeout(async () => {
-                    const winnerData = await fetchWinner();
-                    if (!winnerData) {
-                        console.error("No winner data found");
-                        return;
-                    }
-                    console.log("Winner Data:", winnerData.winner_address);
-
-                    for (const i in players){
-                        if (players[i].wallets_address == winnerData.winner_address) {
-                            const winnerPlayer = players[i];
-                            const startAngle = winnerPlayer.startAngle;
-                            const endAngle = winnerPlayer.endAngle;
-
-                            console.log("Winner Player:", winnerPlayer);
-                            console.log("Winner Angle : ", startAngle, endAngle);
-                            const finalAngle = spinWheel(startAngle, endAngle);
-                            spinWheelClient(await finalAngle);
-                            setTimeout(() => resetGame(), 11000);
-                        };
-                    };
-
-                    
-                }, 6000);
-            }
-        }, 1000);
-
-        return () => clearInterval(interval);
+    const fetchplayerdata = async () => {
+        const { data, error } = await supabase.from('players_data').select('*');
+  
+    if (error) {
+      console.error('Error during data recovery', error);
+      return;
     }
-}, [gameStartTime, players]);
+  
+    if (data) {
+        console.log(data)
+        return(data)
+    }
+  };
+    
+  // Mettre à jour le timer basé sur le gameStartTime
+    useEffect(() => {
+        if (gameStartTime) {
+            const interval = setInterval(async () => {
+                const now = Date.now();
+                const timeElapsed = Math.floor((now - gameStartTime) / 1000);
+                const timeLeft = 30 - timeElapsed;
+
+                if (timeLeft > 0) {
+                    setTimer(timeLeft);
+                } else {
+                    clearInterval(interval); // Nettoyer l'intervalle ici
+                    setTimer(0);
+                    const playerdata = await fetchplayerdata();
+                    if (!playerdata) {
+                        return console.error("erreur en fetch player du use effect")
+                    }
+
+                    const usepot = playerdata.reduce((acc, player) => acc + player.bet_amount, 0);
+
+                    let startAngleuse = 0;
+                    playerdata.map(player => {
+                        player.startAngle = startAngleuse;
+                        const playerShare = player.bet_amount / usepot;
+                        const endAngleuse = startAngleuse + (playerShare * 360);
+                        player.endAngle = endAngleuse;
+                        startAngleuse = endAngleuse;})
+                    
+                    console.log("playerdata : ",playerdata)
+
+                    // Attendre un peu avant de procéder
+                    setTimeout(async () => {
+                        const winnerData = await fetchWinner();
+                        if (!winnerData) {
+                            console.error("No winner data found");
+                            return;
+                        }
+                        console.log("Winner Data:", winnerData.winner_address);
+
+                        for (const i in playerdata){
+                            if (playerdata[i].wallets_address == winnerData.winner_address) {
+                                const winnerPlayer = playerdata[i];
+                                const startAngle = winnerPlayer.startAngle;
+                                const endAngle = winnerPlayer.endAngle;
+
+                                console.log("Winner Player:", winnerPlayer);
+                                console.log("Winner Angle : ", startAngle, endAngle);
+                                const finalAngle = spinWheel(startAngle, endAngle);
+                                console.log("final angle wheel : ", finalAngle)
+                                spinWheelClient(await finalAngle);
+                                setTimeout(() => resetGame(), 11000);
+                            };
+                        };
+
+                        
+                    }, 6000);
+                }
+            }, 1000);
+
+            return () => clearInterval(interval);
+        }
+    }, [gameStartTime]);
 
 
     return <section className='grid xl:grid-cols-2 xl:gap-20 text-left justify-center'>

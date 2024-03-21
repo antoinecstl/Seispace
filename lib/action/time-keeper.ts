@@ -43,6 +43,7 @@ export async function timeKeeper(startTime: number) {
 
     try {
     // Exécuter GameInfiniteserver
+    console.log("execute game infinite")
     await GameInfiniteserver("sei18j0wumtq8yewt7ka8403q7v7qfezhlsc53aq3hm7uvq8gj9xdnjs4rctnz");
     } catch (error) {
     console.error("Error on executing the sc:", error);
@@ -54,7 +55,7 @@ export async function timeKeeper(startTime: number) {
     .match({ id: lockData.id });
     };
 
-  await sleep(15000);
+  await sleep(14000);
   try {
     const { data, error } = await supabase
       .from("players_data")

@@ -23,7 +23,7 @@ function Topbar() {
                     <Image className="hidden sm:inline" src='/discordsvg.svg' alt='logo' width={31} height={31}/>
                 </Link>
             </div>
-            <div className="bg-primary-600 hover:bg-primary-500 duration-300 px-2 py-1 rounded-xl">
+            <div className="bg-primary-600 hover:bg-primary-500 duration-300 px-2 py-1 rounded-lg">
                 <WalletConnectButton/>
             </div>
         </div>

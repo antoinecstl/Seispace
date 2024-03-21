@@ -19,7 +19,6 @@ export default function Home() {
   const { connectedWallet, accounts } = useWallet();
   const walletAccount = useMemo(() => accounts?.[0], [accounts]);
   const [totalBet, setTotalBet] = useState<number>(0);
-  const [WinnerAdd, setWinnerAdd] = useState('');
   const [isWinner, setIsWinner] = useState(false);
   const [error, setError] = useState('');
 
@@ -43,7 +42,7 @@ export default function Home() {
 
   const submitBet = async () => {
     if (!walletAccount) {
-      setError('Wallet account is not available');
+      setError('Wallet account is not connected');
       return;
     }
 
@@ -89,6 +88,10 @@ export default function Home() {
       timestamp: string;
     };
   }
+  
+  function sleep(ms: number) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
 
   useEffect(() => {
     const channel = supabase.channel('game_winner').on('postgres_changes' as any, {
@@ -96,8 +99,11 @@ export default function Home() {
             schema: 'public',
             table: "game_winner"
     }, async (payload : GameWinnerPayload) => {
-        setWinnerAdd(payload.new.winner_address);
-        if (WinnerAdd === walletAccount?.address) {
+        const connected = walletAccount?.address;
+        console.log(connected)
+        console.log(payload.new.winner_address);
+        if (payload.new.winner_address == connected) {
+          sleep(6000);
           setIsWinner(true);
         } else {
           setIsWinner(false);
@@ -109,13 +115,9 @@ export default function Home() {
     return () => {supabase.removeChannel(channel)};
   }, [supabase]);
 
-  if (isWinner) {
-    setTimeout(() => {
-      return <Winner amount={totalBet} onBack={() => setIsWinner(false)} />;
-    }, 10000)
-  }
-
-  return (
+  return isWinner ? (
+      <Winner amount={totalBet} onBack={() => setIsWinner(false)} />
+      ) : (
     <main className="flex flex-col items-center justify-center">
       <section className="text-center">
         <div className="mt-8 mb-6 sm:mb-12 lg:mb-20 pt-8 items-center">
@@ -141,6 +143,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-    </main>
-  );
-}
+    </main>)
+    
+  };
