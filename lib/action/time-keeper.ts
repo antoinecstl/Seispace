@@ -55,7 +55,7 @@ export async function timeKeeper(startTime: number) {
     .match({ id: lockData.id });
     };
 
-  await sleep(14000);
+  await sleep(18000);
   try {
     const { data, error } = await supabase
       .from("players_data")

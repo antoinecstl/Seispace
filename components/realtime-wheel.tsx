@@ -244,7 +244,7 @@ export default function RealtimeWheel ({
                                 const finalAngle = spinWheel(startAngle, endAngle);
                                 console.log("final angle wheel : ", finalAngle)
                                 spinWheelClient(await finalAngle);
-                                setTimeout(() => resetGame(), 11000);
+                                setTimeout(() => resetGame(), 15000);
                             };
                         };
 
