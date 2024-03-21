@@ -249,7 +249,7 @@ export default function RealtimeWheel ({
                         };
 
                         
-                    }, 6000);
+                    }, 8000);
                 }
             }, 1000);
 
