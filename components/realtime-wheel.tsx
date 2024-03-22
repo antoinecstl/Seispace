@@ -204,6 +204,7 @@ export default function RealtimeWheel ({
 
                 if (timeLeft > 0) {
                     setTimer(timeLeft);
+                    return
                 } else {
                     clearInterval(interval); // Nettoyer l'intervalle ici
                     setTimer(0);

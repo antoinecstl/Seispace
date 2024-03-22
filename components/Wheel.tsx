@@ -5,7 +5,7 @@ import RealtimeWheel from './realtime-wheel';
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { timeKeeper } from '@/lib/action/time-keeper';
 
-const WheelOfFortune: React.FC = () => {
+const Wheel: React.FC = () => {
   const [timer, setTimer] = useState(30);
   const [gameStartTime, setGameStartTime] = useState<number | null>(null);
   const supabase = createClientComponentClient();
@@ -48,4 +48,4 @@ const WheelOfFortune: React.FC = () => {
     />
 );
 };
-export default WheelOfFortune;
+export default Wheel;
